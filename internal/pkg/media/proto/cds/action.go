@@ -1,4 +1,4 @@
-package proto
+package cds
 
 import "encoding/xml"
 
@@ -25,6 +25,6 @@ type BrowseResp struct {
 }
 
 func (r *BrowseResp) Init() *BrowseResp {
-	r.NamespaceU = "urn:schemas-upnp-org:service:ContentDirectory:1"
+	r.NamespaceU = namespace
 	return r
 }

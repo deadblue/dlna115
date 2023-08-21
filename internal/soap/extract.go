@@ -5,7 +5,7 @@ import (
 	"encoding/xml"
 )
 
-func Extract(data []byte) (beginOffset, endOffset int64, name string) {
+func Extract(data []byte) (name string, begin, end int64) {
 	d := xml.NewDecoder(bytes.NewReader(data))
 	var tmpOffset int64
 	for {
@@ -16,15 +16,15 @@ func Extract(data []byte) (beginOffset, endOffset int64, name string) {
 		switch t := t.(type) {
 		case xml.StartElement:
 			if t.Name.Space == "s" && t.Name.Local == "Body" {
-				beginOffset = d.InputOffset()
+				begin = d.InputOffset()
 			} else {
-				if beginOffset > 0 && name == "" {
+				if begin > 0 && name == "" {
 					name = t.Name.Local
 				}
 			}
 		case xml.EndElement:
 			if t.Name.Space == "s" && t.Name.Local == "Body" {
-				endOffset = tmpOffset
+				end = tmpOffset
 			}
 		}
 		tmpOffset = d.InputOffset()

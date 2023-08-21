@@ -11,12 +11,9 @@ type Envelope struct {
 	} `xml:"s:Body"`
 }
 
-func (e *Envelope) Init() *Envelope {
+func (e *Envelope) Init(data any) *Envelope {
 	e.XmlNs = "http://schemas.xmlsoap.org/soap/envelope/"
 	e.EncodingStyle = "http://schemas.xmlsoap.org/soap/encoding/"
-	return e
-}
-
-func (e *Envelope) SetData(data any) {
 	e.Body.Data = data
+	return e
 }

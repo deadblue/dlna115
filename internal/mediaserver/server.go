@@ -10,6 +10,10 @@ import (
 )
 
 type Server struct {
+	// Closed flag
+	cf int32
+	// Error channel
+	ec chan error
 	// Core HTTP server
 	hs *http.Server
 	// Services
@@ -20,18 +24,12 @@ type Server struct {
 	descXml []byte
 }
 
-func (s *Server) Run() error {
-	return s.hs.ListenAndServe()
-}
-
 func New(uuid string) *Server {
 	ea := elevengo.Default()
 	fs := forward.New(ea)
 	s := &Server{
-		// Initialize HTTP server
-		hs: &http.Server{
-			Addr: ":5000",
-		},
+		ec: make(chan error, 1),
+		hs: &http.Server{},
 		// Services
 		fs:  fs,
 		cds: contentdirectory.New(ea, fs),

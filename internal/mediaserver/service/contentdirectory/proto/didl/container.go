@@ -47,7 +47,7 @@ type StorageFolderContainer struct {
 }
 
 func (o *StorageFolderContainer) Init() *StorageFolderContainer {
-	o.Restricted = "1"
 	o.Class = ContainerClassStorageFolder
+	o.Restricted = "1"
 	return o
 }

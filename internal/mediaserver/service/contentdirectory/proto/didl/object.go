@@ -24,5 +24,5 @@ type Res struct {
 	NrAudioChannels string `xml:"nrAudioChannels,attr"`
 	SampleFrequency string `xml:"sampleFrequency,attr"`
 
-	Url string `xml:",chardata"`
+	URL string `xml:",chardata"`
 }

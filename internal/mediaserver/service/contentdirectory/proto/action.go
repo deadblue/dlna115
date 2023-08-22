@@ -1,6 +1,9 @@
 package proto
 
-import "encoding/xml"
+import (
+	"bytes"
+	"encoding/xml"
+)
 
 type BrowseReq struct {
 	XMLName    xml.Name
@@ -27,6 +30,13 @@ type BrowseResp struct {
 func (r *BrowseResp) Init() *BrowseResp {
 	r.NamespaceU = namespace
 	return r
+}
+
+func (r *BrowseResp) SetResult(result any) {
+	data, _ := xml.Marshal(result)
+	buf := &bytes.Buffer{}
+	xml.EscapeText(buf, data)
+	r.Result = buf.String()
 }
 
 type SearchReq struct {

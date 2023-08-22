@@ -1,4 +1,4 @@
-github.com/deadblue/elevengo v0.5.1 h1:ZbxqctiFVaGw9g5eUu1Q2+vvJjBsDHGBdCR2Mw7cdtw=
-github.com/deadblue/elevengo v0.5.1/go.mod h1:gVSSLDXU0CGoeOikN1lQo22VasUAJdHyaCGmLx7puVI=
+github.com/deadblue/elevengo v0.4.6-0.20230821152421-786e9f6c9427 h1:HK7Fuxe5Z/e4arMn3bYjhR0qK7EHqeSHp3JLuwQeLS4=
+github.com/deadblue/elevengo v0.4.6-0.20230821152421-786e9f6c9427/go.mod h1:gVSSLDXU0CGoeOikN1lQo22VasUAJdHyaCGmLx7puVI=
 github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
 github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=

@@ -34,5 +34,6 @@ type VideoItem struct {
 
 func (o *VideoItem) Init() *VideoItem {
 	o.Class = ItemClassVideo
+	o.Restricted = "1"
 	return o
 }

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/deadblue/dlna115/internal/mediaserver/service/contentdirectory/proto"
+	"github.com/deadblue/dlna115/internal/mediaserver/service/contentdirectory/proto/didl"
 	"github.com/deadblue/dlna115/internal/soap"
 	"github.com/deadblue/dlna115/internal/xmlhttp"
 	"github.com/deadblue/elevengo"
@@ -61,16 +62,37 @@ func (s *Service) handleActionBrowse(payload []byte) (ret any, err error) {
 		return
 	}
 	resp := (&proto.BrowseResp{}).Init()
+	result := (&didl.Document{}).Init()
 	// Get file list
 	it, err := s.ea.FileIterate(req.ObjectID)
 	if err != nil {
 		return
 	}
-	file := &elevengo.File{}
 	for ; err == nil; err = it.Next() {
+		file := &elevengo.File{}
 		it.Get(file)
+		if file.IsDirectory {
+			cont := (&didl.StorageFolderContainer{}).Init()
+			cont.ID = file.FileId
+			cont.ParentID = req.ObjectID
+			cont.StorageUsed = -1
+			result.AppendContainer(cont)
+			resp.TotalMatches += 1
+		} else if file.IsVideo {
+			item := (&didl.VideoItem{}).Init()
+			item.ID = file.FileId
+			item.ParentID = req.ObjectID
+			item.Title = file.Name
+			item.Res.ProtocolInfo = "http-get:*:video/mp4:*"
+			item.Res.Size = file.Size
+			item.Res.URL = s.ff.GetAccessURL(file.PickCode)
+			resp.TotalMatches += 1
+		} else {
+			continue
+		}
 	}
-
+	resp.NumberReturned = resp.TotalMatches
+	resp.SetResult(result)
 	ret = resp
 	return
 }

@@ -10,16 +10,15 @@ import (
 type Server struct {
 	// UDP connection
 	conn *net.UDPConn
-	// Error channel
-	errCh chan error
+	// Done channel
+	done chan struct{}
 }
 
 func (s *Server) Startup() (err error) {
-	// Resolve never fails!
-	addr, _ := net.ResolveUDPAddr("udp4", "239.255.255.250:1900")
-	if s.conn, err = net.ListenMulticastUDP("udp", nil, addr); err == nil {
-		go s.loop()
+	if s.conn, err = net.ListenMulticastUDP("udp4", nil, serverAddr); err != nil {
+		return
 	}
+	go s.loop()
 	return
 }
 
@@ -27,34 +26,34 @@ func (s *Server) Shutdown() {
 	if s.conn != nil {
 		_ = s.conn.Close()
 	}
-	close(s.errCh)
 }
 
-func (s *Server) Error() <-chan error {
-	return s.errCh
+func (s *Server) Done() <-chan struct{} {
+	return s.done
 }
 
 func (s *Server) loop() {
 	log.Println("Start SSDP service...")
 	buf := make([]byte, 1500)
 	for {
-		size, addr, err := s.conn.ReadFrom(buf)
+		size, addr, err := s.conn.ReadFromUDP(buf)
 		if err != nil {
 			if !errors.Is(err, net.ErrClosed) {
 				log.Printf("Read error: %s", err.Error())
 			}
 			break
 		}
-		log.Printf("Receive %d bytes from peer [%s]: %s",
-			size, addr.String(), buf[:size],
+		log.Printf("Receive %d bytes from peer [%s]:\n%s",
+			size, addr.String(), string(buf[:size]),
 		)
 	}
 	log.Printf("Server shutdown!")
+	close(s.done)
 }
 
 func NewServer() *Server {
 	server := &Server{
-		errCh: make(chan error, 1),
+		done: make(chan struct{}, 1),
 	}
 	return server
 }

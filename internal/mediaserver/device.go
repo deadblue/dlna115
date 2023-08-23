@@ -8,6 +8,11 @@ import (
 	"github.com/deadblue/dlna115/internal/mediaserver/proto"
 	"github.com/deadblue/dlna115/internal/mediaserver/service/connectionmanager"
 	"github.com/deadblue/dlna115/internal/mediaserver/service/contentdirectory"
+	"github.com/deadblue/dlna115/internal/upnp"
+)
+
+const (
+	deviceDescUrl = "/device/desc.xml"
 )
 
 func makeDeviceDesc(uuid string) []byte {
@@ -44,7 +49,7 @@ func makeDeviceDesc(uuid string) []byte {
 func (s *Server) handleDescDeviceXml(rw http.ResponseWriter, req *http.Request) {
 	rw.Header().Set("Content-Type", "text/xml")
 	rw.Header().Set("Content-Length", strconv.Itoa(len(s.descXml)))
-	rw.Header().Set("Server", serverTag)
+	rw.Header().Set("Server", upnp.ServerTag)
 	rw.WriteHeader(http.StatusOK)
 	rw.Write(s.descXml)
 }

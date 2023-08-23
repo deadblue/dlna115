@@ -5,8 +5,7 @@ import (
 
 	"github.com/deadblue/dlna115/internal/mediaserver/service/connectionmanager"
 	"github.com/deadblue/dlna115/internal/mediaserver/service/contentdirectory"
-	"github.com/deadblue/dlna115/internal/mediaserver/service/forward"
-	"github.com/deadblue/elevengo"
+	"github.com/deadblue/dlna115/internal/mediaserver/service/storage115"
 )
 
 type Server struct {
@@ -17,7 +16,7 @@ type Server struct {
 	// Core HTTP server
 	hs *http.Server
 	// Services
-	fs  *forward.Service
+	ss  *storage115.Service
 	cds *contentdirectory.Service
 	cms *connectionmanager.Service
 
@@ -25,24 +24,26 @@ type Server struct {
 }
 
 func New(uuid string) *Server {
-	ea := elevengo.Default()
-	fs := forward.New(ea)
+	// Create storage service
+	ss := storage115.New()
+	// Make server
 	s := &Server{
+		cf: 0,
 		ec: make(chan error, 1),
 		hs: &http.Server{},
 		// Services
-		fs:  fs,
-		cds: contentdirectory.New(ea, fs),
+		ss:  ss,
+		cds: contentdirectory.New(ss),
 		cms: connectionmanager.New(),
 		// Make description xml
 		descXml: makeDeviceDesc(uuid),
 	}
 	// Register handle functions
 	mux := http.NewServeMux()
+	// Register storage service URLs
+	ss.RegisterTo(mux)
 	// Device description URL
 	mux.HandleFunc(deviceDescUrl, s.handleDescDeviceXml)
-	// Forwarder URLs
-	mux.HandleFunc(forward.HandleURL, s.fs.HandleVideo)
 	// ConnectionManager service URLs
 	mux.HandleFunc(connectionmanager.DescUrl, s.cms.HandleDescXml)
 	mux.HandleFunc(connectionmanager.ControlUrl, s.cms.HandleControl)

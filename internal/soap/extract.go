@@ -5,6 +5,8 @@ import (
 	"encoding/xml"
 )
 
+// Extract extracts body element from a SOAP envelope, returns name and offset
+// of the body.
 func Extract(data []byte) (name string, begin, end int64) {
 	d := xml.NewDecoder(bytes.NewReader(data))
 	var tmpOffset int64

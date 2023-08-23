@@ -2,6 +2,8 @@ package proto
 
 import (
 	"encoding/xml"
+
+	"github.com/deadblue/dlna115/internal/upnp"
 )
 
 type Icon struct {
@@ -29,7 +31,6 @@ type Description struct {
 		Minor int `xml:"minor"`
 	} `xml:"specVersion"`
 	Device struct {
-		// Should be "urn:schemas-upnp-org:device:MediaServer:1"
 		DeviceType string `xml:"deviceType"`
 
 		// Basic information
@@ -63,6 +64,6 @@ func (d *Description) Init() *Description {
 	d.Xmlns = "urn:schemas-upnp-org:device-1-0"
 	d.SpecVersion.Major = 1
 	d.SpecVersion.Minor = 0
-	d.Device.DeviceType = "urn:schemas-upnp-org:device:MediaServer:1"
+	d.Device.DeviceType = upnp.DeviceTypeMediaServer1
 	return d
 }

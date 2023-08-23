@@ -1,33 +1,15 @@
 package contentdirectory
 
 import (
-	"fmt"
-	"net/http"
-
-	"github.com/deadblue/elevengo"
-	"github.com/google/uuid"
+	"github.com/deadblue/dlna115/internal/mediaserver/service/storageservice"
 )
 
-type FileForwarder interface {
-	GetAccessURL(accessCode string) string
-}
-
 type Service struct {
-	ea *elevengo.Agent
-	ff FileForwarder
+	ss storageservice.StorageService
 }
 
-func New(ea *elevengo.Agent, ff FileForwarder) *Service {
+func New(ss storageservice.StorageService) *Service {
 	return &Service{
-		ea: ea,
-		ff: ff,
+		ss: ss,
 	}
-}
-
-func (s *Service) HandleEvent(rw http.ResponseWriter, req *http.Request) {
-	if req.Method == "SUBSCRIBE" {
-		subId := fmt.Sprintf("uuid:%s", uuid.NewString())
-		req.Header.Set("SID", subId)
-	}
-	rw.WriteHeader(http.StatusOK)
 }

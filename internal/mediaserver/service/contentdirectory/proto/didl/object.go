@@ -21,8 +21,8 @@ type Res struct {
 	Size            int64  `xml:"size,attr"`
 	Bitrate         int    `xml:"bitrate,attr"`
 	Duration        string `xml:"duration,attr"`
-	NrAudioChannels string `xml:"nrAudioChannels,attr"`
-	SampleFrequency string `xml:"sampleFrequency,attr"`
+	NrAudioChannels int    `xml:"nrAudioChannels,attr"`
+	SampleFrequency int    `xml:"sampleFrequency,attr"`
 
 	URL string `xml:",chardata"`
 }

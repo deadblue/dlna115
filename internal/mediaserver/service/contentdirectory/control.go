@@ -2,14 +2,15 @@ package contentdirectory
 
 import (
 	"encoding/xml"
+	"fmt"
 	"io"
 	"net/http"
 
 	"github.com/deadblue/dlna115/internal/mediaserver/service/contentdirectory/proto"
 	"github.com/deadblue/dlna115/internal/mediaserver/service/contentdirectory/proto/didl"
+	"github.com/deadblue/dlna115/internal/mediaserver/service/storageservice"
 	"github.com/deadblue/dlna115/internal/soap"
 	"github.com/deadblue/dlna115/internal/xmlhttp"
-	"github.com/deadblue/elevengo"
 )
 
 func renderError(rw http.ResponseWriter, status int, err error) {
@@ -64,35 +65,47 @@ func (s *Service) handleActionBrowse(payload []byte) (ret any, err error) {
 	resp := (&proto.BrowseResp{}).Init()
 	result := (&didl.Document{}).Init()
 	// Get file list
-	it, err := s.ea.FileIterate(req.ObjectID)
-	if err != nil {
-		return
-	}
-	for ; err == nil; err = it.Next() {
-		file := &elevengo.File{}
-		it.Get(file)
-		if file.IsDirectory {
-			cont := (&didl.StorageFolderContainer{}).Init()
-			cont.ID = file.FileId
-			cont.ParentID = req.ObjectID
-			cont.StorageUsed = -1
-			result.AppendContainer(cont)
+	items := s.ss.Browse(req.ObjectID)
+	for _, item := range items {
+		switch item := item.(type) {
+		case *storageservice.Dir:
+			// Make container object
+			obj := (&didl.StorageFolderContainer{}).Init()
+			obj.ID = item.ID
+			obj.ParentID = req.ObjectID
+			obj.StorageUsed = -1
+			obj.Title = item.Name
+			result.AppendContainer(obj)
 			resp.TotalMatches += 1
-		} else if file.IsVideo {
-			item := (&didl.VideoItem{}).Init()
-			item.ID = file.FileId
-			item.ParentID = req.ObjectID
-			item.Title = file.Name
-			item.Res.ProtocolInfo = "http-get:*:video/mp4:*"
-			item.Res.Size = file.Size
-			item.Res.URL = s.ff.GetAccessURL(file.PickCode)
+		case *storageservice.VideoFile:
+			// Make videoItem object
+			obj := (&didl.VideoItem{}).Init()
+			obj.ID = item.ID
+			obj.ParentID = req.ObjectID
+			obj.Title = item.Name
+			obj.Res.ProtocolInfo = "http-get:*:video/mp4:*"
+			obj.Res.Size = item.Size
+			obj.Res.NrAudioChannels = item.AudioChannels
+			obj.Res.SampleFrequency = item.AudioSampleRate
+			obj.Res.Resolution = item.VideoResolution
+			obj.Res.URL = item.PlayURL
+			// Calculate bitrate
+			obj.Res.Bitrate = int(float64(item.Size) / item.Duration)
+			// Format Duration
+			obj.Res.Duration = formatDuration(item.Duration)
 			resp.TotalMatches += 1
-		} else {
-			continue
 		}
 	}
 	resp.NumberReturned = resp.TotalMatches
 	resp.SetResult(result)
 	ret = resp
 	return
+}
+
+func formatDuration(seconds float64) string {
+	m := int(seconds / 60)
+	s := seconds - float64(m*60)
+	h := int(m / 60)
+	m = m % 60
+	return fmt.Sprintf("%d:%02d:%06.3f", h, m, s)
 }

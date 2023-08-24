@@ -37,11 +37,7 @@ func (s *Server) Startup() (err error) {
 	if err != nil {
 		return err
 	}
-	log.Printf(
-		"Media server is running at: %s://%s",
-		l.Addr().Network(),
-		l.Addr().String(),
-	)
+	log.Printf("Running DLNA media server at http://%s", l.Addr().String())
 	go s.serve(l)
 	return nil
 }

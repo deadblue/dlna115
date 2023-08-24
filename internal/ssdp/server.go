@@ -15,10 +15,10 @@ type Server struct {
 }
 
 func (s *Server) Startup() (err error) {
-	if s.conn, err = net.ListenMulticastUDP("udp4", nil, serverAddr); err != nil {
-		return
+	s.conn, err = net.ListenMulticastUDP("udp4", nil, serverAddr)
+	if err == nil {
+		go s.loop()
 	}
-	go s.loop()
 	return
 }
 
@@ -33,21 +33,20 @@ func (s *Server) Done() <-chan struct{} {
 }
 
 func (s *Server) loop() {
-	log.Println("Start SSDP service...")
 	buf := make([]byte, 1500)
 	for {
-		size, addr, err := s.conn.ReadFromUDP(buf)
-		if err != nil {
+		if size, raddr, err := s.conn.ReadFromUDP(buf); err != nil {
 			if !errors.Is(err, net.ErrClosed) {
 				log.Printf("Read error: %s", err.Error())
 			}
 			break
+		} else {
+			req := &Request{}
+			if err = req.Unmarshal(buf[:size]); err == nil {
+				go s.handle(req, raddr)
+			}
 		}
-		log.Printf("Receive %d bytes from peer [%s]:\n%s",
-			size, addr.String(), string(buf[:size]),
-		)
 	}
-	log.Printf("Server shutdown!")
 	close(s.done)
 }
 

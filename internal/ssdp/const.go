@@ -1,6 +1,8 @@
 package ssdp
 
-import "net"
+import (
+	"net"
+)
 
 const (
 	serverHost = "239.255.255.250:1900"
@@ -8,12 +10,23 @@ const (
 	methodNotify = "NOTIFY"
 	methodSearch = "M-SEARCH"
 
+	headerHost         = "HOST"
+	headerServer       = "SERVER"
+	headerLocation     = "LOCATION"
+	headerCacheControl = "CACHE-CONTROL"
+
+	headerExtension           = "EXT"
+	headerSearchTarget        = "ST"
+	headerUniqueServiceName   = "USN"
+	headerNotificationType    = "NT"
+	headerNotificationSubType = "NTS"
+
 	notifyAlive  = "ssdp:alive"
 	notifyByebye = "ssdp:byebye"
 
 	// manDiscover = "\"ssdp:discover\""
 
-	// searchAll        = "ssdp:all"
+	searchAll = "ssdp:all"
 	// searchRootDevice = "upnp:rootdevice"
 )
 

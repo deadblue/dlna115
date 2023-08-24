@@ -2,8 +2,6 @@ package proto
 
 import (
 	"encoding/xml"
-
-	"github.com/deadblue/dlna115/internal/upnp"
 )
 
 type Icon struct {
@@ -34,18 +32,21 @@ type Description struct {
 		DeviceType string `xml:"deviceType"`
 
 		// Basic information
-		UDN             string `xml:"UDN"`
-		FriendlyName    string `xml:"friendlyName"`
-		PresentationURL string `xml:"presentationURL"`
-		SerialNumber    string `xml:"serialNumber"`
+		UDN string `xml:"UDN"`
+		UPC string `xml:"UPC,omitempty"`
+
+		FriendlyName string `xml:"friendlyName"`
+		SerialNumber string `xml:"serialNumber,omitempty"`
+
+		// Manufacturer information
+		Manufacturer    string `xml:"manufacturer"`
+		ManufacturerURL string `xml:"manufacturerURL,omitempty"`
 
 		// Model information
 		ModelName        string `xml:"modelName"`
-		ModelNumber      string `xml:"modelNumber"`
-		ModelDescription string `xml:"modelDescription"`
-		ModelURL         string `xml:"modelURL"`
-		Manufacturer     string `xml:"manufacturer"`
-		ManufacturerURL  string `xml:"manufacturerURL"`
+		ModelDescription string `xml:"modelDescription,omitempty"`
+		ModelNumber      string `xml:"modelNumber,omitempty"`
+		ModelURL         string `xml:"modelURL,omitempty"`
 
 		// Icon list
 		IconList struct {
@@ -56,14 +57,16 @@ type Description struct {
 		ServiceList struct {
 			Services []Service `xml:"service"`
 		} `xml:"serviceList"`
+
+		PresentationURL string `xml:"presentationURL,omitempty"`
 	} `xml:"device"`
 }
 
 // Init fills fixed fields into Description document
-func (d *Description) Init() *Description {
+func (d *Description) Init(deviceType string) *Description {
 	d.Xmlns = "urn:schemas-upnp-org:device-1-0"
 	d.SpecVersion.Major = 1
 	d.SpecVersion.Minor = 0
-	d.Device.DeviceType = upnp.DeviceTypeMediaServer1
+	d.Device.DeviceType = deviceType
 	return d
 }

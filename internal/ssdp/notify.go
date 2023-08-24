@@ -1,67 +1,47 @@
 package ssdp
 
 import (
-	"fmt"
 	"net"
 
 	"github.com/deadblue/dlna115/internal/upnp"
+	"github.com/deadblue/dlna115/internal/util"
 )
 
-func NotifyAvailable(
-	uuid string,
-	deviceType string,
-	serverPort int,
-	descUrlPath string,
-) (err error) {
-	// Get net interfaces
-	nifs, err := net.Interfaces()
-	if err != nil {
-		return
-	}
-
+// NotifyDeviceAvailable broadcasts a device available advertisement on all
+// networks.
+func NotifyDeviceAvailable(device upnp.Device) (err error) {
 	// Prepare request
 	req := &Request{
 		Method: methodNotify,
 	}
-	req.SetHeader("HOST", serverHost)
-	req.SetHeader("CACHE-CONTROL", "max-age=3600")
-	req.SetHeader("NT", deviceType)
-	req.SetHeader("NTS", notifyAlive)
-	req.SetHeader("SERVER", upnp.ServerTag)
-	usn := fmt.Sprintf("uuid:%s:%s", uuid, deviceType)
-	req.SetHeader("USN", usn)
+	req.SetHeader(headerHost, serverHost)
+	req.SetHeader(headerCacheControl, "max-age=3600")
+	req.SetHeader(headerNotificationType, device.DeviceType())
+	req.SetHeader(headerNotificationSubType, notifyAlive)
+	req.SetHeader(headerServer, upnp.ServerName)
+	req.SetHeader(headerUniqueServiceName, device.USN())
 
-	for _, nif := range nifs {
-		// Skip inactive net interface
-		if (nif.Flags&net.FlagUp == 0) || (nif.Flags&net.FlagRunning == 0) {
-			continue
-		}
-		addrs, err := nif.Addrs()
-		if err != nil {
-			continue
-		}
-		// Find IPv4 Address
-		for _, addr := range addrs {
-			netip, ok := addr.(*net.IPNet)
-			if !ok {
-				continue
-			}
-			ipv4 := netip.IP.To4()
-			if ipv4 == nil {
-				continue
-			}
-			location := fmt.Sprintf(
-				"http://%s:%d/%s",
-				ipv4.String(), serverPort, descUrlPath,
-			)
-			req.SetHeader("LOCATION", location)
-			// Send broadcast
-			conn, err := net.DialUDP(serverAddr.Network(), nil, serverAddr)
-			if err != nil {
-				continue
-			}
-			req.WriteTo(conn)
-		}
+	util.ForAllIPs(true, func(ip net.IP) {
+		req.SetHeader(headerLocation, device.GetDescURL(ip.String()))
+		util.Broadcast(req, ip, serverAddr)
+	})
+	return
+}
+
+// NotifyDeviceAvailable broadcasts a device unavailable advertisement on all
+// networks.
+func NotifyDeviceUnavailable(device upnp.Device) (err error) {
+	// Prepare request
+	req := &Request{
+		Method: methodNotify,
 	}
+	req.SetHeader(headerHost, serverHost)
+	req.SetHeader(headerNotificationType, device.DeviceType())
+	req.SetHeader(headerNotificationSubType, notifyByebye)
+	req.SetHeader(headerUniqueServiceName, device.USN())
+
+	util.ForAllIPs(true, func(ip net.IP) {
+		util.Broadcast(req, ip, serverAddr)
+	})
 	return
 }

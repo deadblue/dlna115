@@ -15,17 +15,19 @@ const (
 	deviceDescUrl = "/device/desc.xml"
 )
 
-func makeDeviceDesc(uuid string) []byte {
+func (s *Server) initDesc() {
 	// Fill description
-	desc := (&proto.Description{}).Init()
-	desc.Device.UDN = fmt.Sprintf("uuid:%s", uuid)
+	desc := (&proto.Description{}).Init(upnp.DeviceTypeMediaServer1)
+	desc.Device.UDN = s.udn
 	desc.Device.FriendlyName = "DLNA115"
-	desc.Device.SerialNumber = uuid
-	desc.Device.ModelName = "DLNA115"
-	desc.Device.ModelURL = "https://github.com/deadblue/dlna115"
-	desc.Device.ModelDescription = "A DLNA server implementation to stream video files from your 115 cloud storage."
 	desc.Device.Manufacturer = "deadblue"
 	desc.Device.ManufacturerURL = "https://github.com/deadblue"
+	desc.Device.ModelDescription = "A DLNA server implementation to stream video files from your 115 cloud storage."
+	desc.Device.ModelName = "DLNA115"
+	desc.Device.ModelNumber = "1.0.0"
+	desc.Device.ModelURL = "https://github.com/deadblue/dlna115"
+	// desc.Device.SerialNumber = ""
+	// desc.Device.PresentationURL = "https://github.com/deadblue/dlna115"
 	desc.Device.ServiceList.Services = []proto.Service{
 		{
 			ServiceType: connectionmanager.ServiceType,
@@ -42,14 +44,27 @@ func makeDeviceDesc(uuid string) []byte {
 			EventSubURL: contentdirectory.EventUrl,
 		},
 	}
-	data, _ := marshalXml(desc)
-	return data
+	s.desc, _ = marshalXml(desc)
 }
 
 func (s *Server) handleDescDeviceXml(rw http.ResponseWriter, req *http.Request) {
 	rw.Header().Set("Content-Type", "text/xml")
-	rw.Header().Set("Content-Length", strconv.Itoa(len(s.descXml)))
-	rw.Header().Set("Server", upnp.ServerTag)
+	rw.Header().Set("Content-Length", strconv.Itoa(len(s.desc)))
+	rw.Header().Set("Server", upnp.ServerName)
 	rw.WriteHeader(http.StatusOK)
-	rw.Write(s.descXml)
+	rw.Write(s.desc)
+}
+
+func (s *Server) DeviceType() string {
+	return upnp.DeviceTypeMediaServer1
+}
+
+func (s *Server) USN() string {
+	return fmt.Sprintf("%s::%s", s.udn, upnp.DeviceTypeMediaServer1)
+}
+
+func (s *Server) GetDescURL(ip string) string {
+	return fmt.Sprintf(
+		"http://%s:%d%s", ip, s.sp, deviceDescUrl,
+	)
 }

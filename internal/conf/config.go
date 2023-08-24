@@ -3,28 +3,34 @@ package conf
 import (
 	"flag"
 	"os"
+
+	"github.com/google/uuid"
 )
 
 type Config struct {
-	// UUID of the device
-	UUID string
-	// Start an SSDP server for M-SEARCH
-	SSDP bool
+	// Port for meida server
+	MediaPort uint
+	// UUID of media server
+	MediaUUID string
+
 	// Return HLS link of video
 	VideoHLS bool
-	// Media Server Port
-	MediaServerPort uint
+	// Start an SSDP server for M-SEARCH
+	SSDP bool
 }
 
 func (c *Config) Init() (err error) {
 	// Get config from commandline
 	fs := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
-	fs.StringVar(&c.UUID, "uuid", "", "")
-	fs.BoolVar(&c.SSDP, "ssdp", false, "")
-	fs.BoolVar(&c.VideoHLS, "hls", true, "")
-	fs.UintVar(&c.MediaServerPort, "media-port", 5115, "")
+	fs.UintVar(&c.MediaPort, "port", 8115, "Listening port of media server.")
+	fs.StringVar(&c.MediaUUID, "uuid", "", "The UUID of media server.")
+	fs.BoolVar(&c.VideoHLS, "video-hls", true, "Streaming video via HLS.")
+	fs.BoolVar(&c.SSDP, "with-ssdp", false, "Start an SSDP server.")
 	if err = fs.Parse(os.Args[1:]); err != nil {
 		return
+	}
+	if c.MediaUUID == "" {
+		c.MediaUUID = uuid.NewString()
 	}
 	return
 }

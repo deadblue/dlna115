@@ -3,6 +3,7 @@ package mediaserver
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -30,12 +31,14 @@ func (s *Server) serve(l net.Listener) {
 
 // Startup starts HTTP server in goroutine.
 func (s *Server) Startup() (err error) {
-	l, err := net.Listen("tcp", ":5000")
+	addr := fmt.Sprintf(":%d", s.sp)
+	l, err := net.Listen("tcp4", addr)
+	// TODO: Select a random port when error
 	if err != nil {
 		return err
 	}
 	log.Printf(
-		"Starting server at: %s://%s",
+		"Media server is running at: %s://%s",
 		l.Addr().Network(),
 		l.Addr().String(),
 	)

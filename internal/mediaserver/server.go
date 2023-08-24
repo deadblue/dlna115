@@ -1,8 +1,10 @@
 package mediaserver
 
 import (
+	"fmt"
 	"net/http"
 
+	"github.com/deadblue/dlna115/internal/conf"
 	"github.com/deadblue/dlna115/internal/mediaserver/service/connectionmanager"
 	"github.com/deadblue/dlna115/internal/mediaserver/service/contentdirectory"
 	"github.com/deadblue/dlna115/internal/mediaserver/service/storage115"
@@ -13,31 +15,43 @@ type Server struct {
 	cf int32
 	// Error channel
 	ec chan error
+
+	// Server port
+	sp uint
 	// Core HTTP server
 	hs *http.Server
+
+	// Unique device name
+	udn string
 	// Services
 	ss  *storage115.Service
 	cds *contentdirectory.Service
 	cms *connectionmanager.Service
 
-	descXml []byte
+	// Description XML content
+	desc []byte
 }
 
-func New(uuid string) *Server {
+func New(config *conf.Config) *Server {
 	// Create storage service
 	ss := storage115.New()
 	// Make server
 	s := &Server{
+		// Lifecycle
 		cf: 0,
 		ec: make(chan error, 1),
+		// Server config
+		sp: config.MediaPort,
+		// HTTP server
 		hs: &http.Server{},
 		// Services
 		ss:  ss,
 		cds: contentdirectory.New(ss),
 		cms: connectionmanager.New(),
-		// Make description xml
-		descXml: makeDeviceDesc(uuid),
+		// UDN
+		udn: fmt.Sprintf("uuid:%s", config.MediaUUID),
 	}
+	s.initDesc()
 	// Register handle functions
 	mux := http.NewServeMux()
 	// Register storage service URLs

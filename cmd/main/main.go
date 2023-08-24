@@ -5,11 +5,17 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/deadblue/dlna115/internal/conf"
 	"github.com/deadblue/dlna115/internal/mediaserver"
-	"github.com/google/uuid"
 )
 
 func main() {
+	var err error
+	config := (&conf.Config{})
+	if err = config.Init(); err != nil {
+		log.Fatal(err)
+	}
+
 	// Handle OS signal
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt)
@@ -19,12 +25,12 @@ func main() {
 	}()
 
 	// Create media service
-	ms := mediaserver.New(uuid.NewString())
+	ms := mediaserver.New(config)
 	// Start media service
-	var err error
 	if err = ms.Startup(); err != nil {
 		log.Fatal(err)
 	}
+	// ssdp.NotifyDeviceAvailable(ms)
 
 	// Loop
 	for running := true; running; {

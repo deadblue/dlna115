@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/deadblue/dlna115/internal/mediaserver/proto"
 	"github.com/deadblue/dlna115/internal/mediaserver/service/connectionmanager"
 	"github.com/deadblue/dlna115/internal/mediaserver/service/contentdirectory"
 	"github.com/deadblue/dlna115/internal/upnp"
@@ -17,7 +16,7 @@ const (
 
 func (s *Server) initDesc() {
 	// Fill description
-	desc := (&proto.Description{}).Init(upnp.DeviceTypeMediaServer1)
+	desc := (&upnp.DeviceDesc{}).Init(upnp.DeviceTypeMediaServer1)
 	desc.Device.UDN = s.udn
 	desc.Device.FriendlyName = "DLNA115"
 	desc.Device.Manufacturer = "deadblue"
@@ -28,7 +27,7 @@ func (s *Server) initDesc() {
 	desc.Device.ModelURL = "https://github.com/deadblue/dlna115"
 	// desc.Device.SerialNumber = ""
 	// desc.Device.PresentationURL = "https://github.com/deadblue/dlna115"
-	desc.Device.ServiceList.Services = []proto.Service{
+	desc.Device.ServiceList.Services = []upnp.DeviceService{
 		{
 			ServiceType: connectionmanager.ServiceType,
 			ServiceId:   connectionmanager.ServiceId,

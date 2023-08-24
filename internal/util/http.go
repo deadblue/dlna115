@@ -1,4 +1,4 @@
-package xmlhttp
+package util
 
 import (
 	"encoding/xml"

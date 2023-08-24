@@ -10,7 +10,7 @@ import (
 	"github.com/deadblue/dlna115/internal/mediaserver/service/contentdirectory/proto/didl"
 	"github.com/deadblue/dlna115/internal/mediaserver/service/storageservice"
 	"github.com/deadblue/dlna115/internal/soap"
-	"github.com/deadblue/dlna115/internal/xmlhttp"
+	"github.com/deadblue/dlna115/internal/util"
 )
 
 func renderError(rw http.ResponseWriter, status int, err error) {
@@ -53,7 +53,7 @@ func (s *Service) HandleControl(rw http.ResponseWriter, req *http.Request) {
 		renderError(rw, http.StatusInternalServerError, err)
 	} else {
 		envelope := (&soap.Envelope{}).Init(resp)
-		xmlhttp.RenderXML(rw, envelope)
+		util.RenderXML(rw, envelope)
 	}
 }
 

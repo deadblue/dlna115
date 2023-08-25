@@ -10,11 +10,10 @@ const (
 	methodNotify = "NOTIFY"
 	methodSearch = "M-SEARCH"
 
-	headerHost         = "HOST"
-	headerServer       = "SERVER"
-	headerLocation     = "LOCATION"
-	headerCacheControl = "CACHE-CONTROL"
-
+	headerHost                = "HOST"
+	headerServer              = "SERVER"
+	headerLocation            = "LOCATION"
+	headerCacheControl        = "CACHE-CONTROL"
 	headerExtension           = "EXT"
 	headerSearchTarget        = "ST"
 	headerUniqueServiceName   = "USN"
@@ -24,10 +23,7 @@ const (
 	notifyAlive  = "ssdp:alive"
 	notifyByebye = "ssdp:byebye"
 
-	// manDiscover = "\"ssdp:discover\""
-
 	searchAll = "ssdp:all"
-	// searchRootDevice = "upnp:rootdevice"
 )
 
 var (

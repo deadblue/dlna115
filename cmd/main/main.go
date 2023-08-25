@@ -5,14 +5,14 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/deadblue/dlna115/internal/conf"
+	"github.com/deadblue/dlna115/internal/app"
 	"github.com/deadblue/dlna115/internal/mediaserver"
 )
 
 func main() {
 	var err error
-	config := (&conf.Config{})
-	if err = config.Init(); err != nil {
+	args := (&app.Args{})
+	if err = args.Init(); err != nil {
 		log.Fatal(err)
 	}
 
@@ -25,7 +25,7 @@ func main() {
 	}()
 
 	// Create media service
-	ms := mediaserver.New(config)
+	ms := mediaserver.New(&args.Media)
 	// Start media service
 	if err = ms.Startup(); err != nil {
 		log.Fatal(err)

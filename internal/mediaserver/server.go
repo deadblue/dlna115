@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/deadblue/dlna115/internal/conf"
 	"github.com/deadblue/dlna115/internal/mediaserver/service/connectionmanager"
 	"github.com/deadblue/dlna115/internal/mediaserver/service/contentdirectory"
 	"github.com/deadblue/dlna115/internal/mediaserver/service/storage115"
+	"github.com/deadblue/dlna115/internal/upnp"
 )
 
 type Server struct {
@@ -18,54 +18,44 @@ type Server struct {
 
 	// Server port
 	sp uint
-	// Core HTTP server
+	// HTTP server
 	hs *http.Server
 
 	// Unique device name
 	udn string
-	// Services
-	ss  *storage115.Service
-	cds *contentdirectory.Service
-	cms *connectionmanager.Service
+	// UPnP services
+	uss []upnp.Service
 
 	// Description XML content
 	desc []byte
 }
 
-func New(config *conf.Config) *Server {
-	// Create storage service
+func New(opts *Options) *Server {
+	// Instantiate services
 	ss := storage115.New()
+	cds := contentdirectory.New(ss)
+	cms := connectionmanager.New()
+
 	// Make server
 	s := &Server{
-		// Lifecycle
-		cf: 0,
-		ec: make(chan error, 1),
-		// Server config
-		sp: config.MediaPort,
-		// HTTP server
-		hs: &http.Server{},
-		// Services
-		ss:  ss,
-		cds: contentdirectory.New(ss),
-		cms: connectionmanager.New(),
-		// UDN
-		udn: fmt.Sprintf("uuid:%s", config.MediaUUID),
+		cf:  0,
+		ec:  make(chan error, 1),
+		sp:  opts.Port,
+		hs:  &http.Server{},
+		udn: fmt.Sprintf("uuid:%s", opts.UUID),
+		uss: []upnp.Service{cds, cms},
 	}
-	s.initDesc()
-	// Register handle functions
+	s.initDesc(opts.Name)
+
+	// Create HTTP handler
 	mux := http.NewServeMux()
-	// Register storage service URLs
-	ss.RegisterTo(mux)
 	// Device description URL
-	mux.HandleFunc(deviceDescUrl, s.handleDescDeviceXml)
-	// ConnectionManager service URLs
-	mux.HandleFunc(connectionmanager.DescUrl, s.cms.HandleDescXml)
-	mux.HandleFunc(connectionmanager.ControlUrl, s.cms.HandleControl)
-	mux.HandleFunc(connectionmanager.EventUrl, s.cms.HandleEvent)
-	// ContentDirectory service URLs
-	mux.HandleFunc(contentdirectory.DescUrl, s.cds.HandleDescXml)
-	mux.HandleFunc(contentdirectory.ControlUrl, s.cds.HandleControl)
-	mux.HandleFunc(contentdirectory.EventUrl, s.cds.HandleEvent)
+	mux.HandleFunc(descUrl, s.handleDescXml)
+	// Register service URLs
+	ss.RegisterTo(mux)
+	cds.RegisterTo(mux)
+	cms.RegisterTo(mux)
+	// Set handler to HTTP server
 	s.hs.Handler = mux
 	return s
 }

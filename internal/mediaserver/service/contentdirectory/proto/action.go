@@ -21,10 +21,10 @@ type BrowseResp struct {
 	XMLName    xml.Name `xml:"u:BrowseResponse"`
 	NamespaceU string   `xml:"xmlns:u,attr"`
 
-	UpdateID       uint   `xml:"UpdateID"`
-	TotalMatches   int    `xml:"TotalMatches"`
-	NumberReturned int    `xml:"NumberReturned"`
 	Result         string `xml:"Result"`
+	NumberReturned int    `xml:"NumberReturned"`
+	TotalMatches   int    `xml:"TotalMatches"`
+	UpdateID       uint   `xml:"UpdateID"`
 }
 
 func (r *BrowseResp) Init() *BrowseResp {

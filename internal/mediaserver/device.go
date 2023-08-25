@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/deadblue/dlna115/internal/mediaserver/service/connectionmanager"
-	"github.com/deadblue/dlna115/internal/mediaserver/service/contentdirectory"
 	"github.com/deadblue/dlna115/internal/upnp"
 	"github.com/deadblue/dlna115/internal/upnp/device"
 )
@@ -28,21 +26,14 @@ func (s *Server) initDesc(name string) {
 	desc.Device.ModelURL = "https://github.com/deadblue/dlna115"
 	// desc.Device.SerialNumber = ""
 	// desc.Device.PresentationURL = "https://github.com/deadblue/dlna115"
-	desc.Device.ServiceList.Services = []device.Service{
-		{
-			ServiceType: connectionmanager.ServiceType,
-			ServiceId:   connectionmanager.ServiceId,
-			ScpdURL:     connectionmanager.DescUrl,
-			ControlURL:  connectionmanager.ControlUrl,
-			EventSubURL: connectionmanager.EventUrl,
-		},
-		{
-			ServiceType: contentdirectory.ServiceType,
-			ServiceId:   contentdirectory.ServiceId,
-			ScpdURL:     contentdirectory.DescUrl,
-			ControlURL:  contentdirectory.ControlUrl,
-			EventSubURL: contentdirectory.EventUrl,
-		},
+	// Service information
+	desc.Device.ServiceList.Services = make([]device.Service, len(s.uss))
+	for i, us := range s.uss {
+		desc.Device.ServiceList.Services[i].ServiceId = us.ServiceId()
+		desc.Device.ServiceList.Services[i].ServiceType = us.ServiceType()
+		desc.Device.ServiceList.Services[i].ScpdURL = us.ServiceDescURL()
+		desc.Device.ServiceList.Services[i].ControlURL = us.ServiceControlURL()
+		desc.Device.ServiceList.Services[i].EventSubURL = us.ServiceEventURL()
 	}
 	s.desc, _ = marshalXml(desc)
 }

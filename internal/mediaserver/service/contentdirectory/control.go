@@ -13,6 +13,11 @@ import (
 	"github.com/deadblue/dlna115/internal/util"
 )
 
+const (
+	actionBrowse = "Browse"
+	actionSearch = "Search"
+)
+
 func renderError(rw http.ResponseWriter, status int, err error) {
 	if status == 0 {
 		status = http.StatusInternalServerError
@@ -43,10 +48,8 @@ func (s *Service) HandleControl(rw http.ResponseWriter, req *http.Request) {
 	// Dispatch request
 	var resp any
 	switch name {
-	case ActionBrowse:
+	case actionBrowse:
 		resp, err = s.handleActionBrowse(payload[begin:end])
-	default:
-		// TODO
 	}
 	// Render response
 	if err != nil {

@@ -19,10 +19,10 @@ func NotifyDeviceAvailable(device upnp.Device) (err error) {
 	req.SetHeader(headerNotificationType, device.DeviceType())
 	req.SetHeader(headerNotificationSubType, notifyAlive)
 	req.SetHeader(headerServer, upnp.ServerName)
-	req.SetHeader(headerUniqueServiceName, device.USN())
+	req.SetHeader(headerUniqueServiceName, device.DeviceUSN())
 
 	util.ForAllIPs(true, func(ip net.IP) {
-		req.SetHeader(headerLocation, device.GetDescURL(ip.String()))
+		req.SetHeader(headerLocation, device.GetDeviceDescURL(ip.String()))
 		util.Broadcast(req, ip, serverAddr)
 	})
 	return
@@ -38,7 +38,7 @@ func NotifyDeviceUnavailable(device upnp.Device) (err error) {
 	req.SetHeader(headerHost, serverHost)
 	req.SetHeader(headerNotificationType, device.DeviceType())
 	req.SetHeader(headerNotificationSubType, notifyByebye)
-	req.SetHeader(headerUniqueServiceName, device.USN())
+	req.SetHeader(headerUniqueServiceName, device.DeviceUSN())
 
 	util.ForAllIPs(true, func(ip net.IP) {
 		util.Broadcast(req, ip, serverAddr)

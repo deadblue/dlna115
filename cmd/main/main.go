@@ -5,13 +5,13 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/deadblue/dlna115/internal/app"
+	"github.com/deadblue/dlna115/internal/daemon"
 	"github.com/deadblue/dlna115/internal/mediaserver"
 )
 
 func main() {
 	var err error
-	args := (&app.Args{})
+	args := (&daemon.Args{})
 	if err = args.Init(); err != nil {
 		log.Fatal(err)
 	}

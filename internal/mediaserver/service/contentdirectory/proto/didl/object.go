@@ -10,7 +10,7 @@ type Object struct {
 	// Children
 	Title   string `xml:"dc:title"`
 	Creator string `xml:"creator,omitempty"`
-	Class   string `xml:"upup:class"`
+	Class   string `xml:"upnp:class"`
 }
 
 type Res struct {

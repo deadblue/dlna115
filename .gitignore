@@ -1,5 +1,6 @@
 .vscode
 
 *_test.go
-
 cmd/test/*
+
+dist/

@@ -1,6 +1,7 @@
 package ssdp
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"io"
@@ -33,24 +34,23 @@ func (req *Request) GetHeader(name string) string {
 	return req.headers[name]
 }
 
-func (req *Request) WriteTo(w io.Writer) (n64 int64, err error) {
-	var n int
+func (req *Request) WriteTo(w io.Writer) (n int64, err error) {
+	bw := bufio.NewWriterSize(w, 1500)
 	startLine := fmt.Sprintf("%s * HTTP/1.1\r\n", req.Method)
-	if n, err = w.Write([]byte(startLine)); err != nil {
+	if _, err = bw.WriteString(startLine); err != nil {
 		return
 	}
-	n64 += int64(n)
 	for name, value := range req.headers {
 		headerLine := fmt.Sprintf("%s: %s\r\n", name, value)
-		if n, err = w.Write([]byte(headerLine)); err != nil {
+		if _, err = bw.WriteString(headerLine); err != nil {
 			return
 		}
-		n64 += int64(n)
 	}
-	if n, err = w.Write(crlf); err != nil {
+	if _, err = bw.Write(crlf); err != nil {
 		return
 	}
-	n64 += int64(n)
+	n = int64(bw.Buffered())
+	err = bw.Flush()
 	return
 }
 
@@ -93,28 +93,27 @@ func (r *Response) SetHeader(name, value string) {
 	r.headers[name] = value
 }
 
-func (r *Response) WriteTo(w io.Writer) (n64 int64, err error) {
-	var n int
+func (r *Response) WriteTo(w io.Writer) (n int64, err error) {
+	bw := bufio.NewWriterSize(w, 1500)
 	// Write start line
 	startLine := fmt.Sprintf(
 		"HTTP/1.1 %d %s\r\n",
 		r.StatusCode, http.StatusText(r.StatusCode),
 	)
-	if n, err = w.Write([]byte(startLine)); err != nil {
+	if _, err = bw.WriteString(startLine); err != nil {
 		return
 	}
 	// Write headers
-	n64 += int64(n)
 	for name, value := range r.headers {
 		headerLine := fmt.Sprintf("%s: %s\r\n", name, value)
-		if n, err = w.Write([]byte(headerLine)); err != nil {
+		if _, err = bw.WriteString(headerLine); err != nil {
 			return
 		}
-		n64 += int64(n)
 	}
-	if n, err = w.Write(crlf); err != nil {
+	if _, err = bw.Write(crlf); err != nil {
 		return
 	}
-	n64 += int64(n)
+	n = int64(bw.Buffered())
+	err = bw.Flush()
 	return
 }

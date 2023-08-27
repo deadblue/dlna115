@@ -1,7 +1,6 @@
 package proto
 
 import (
-	"bytes"
 	"encoding/xml"
 )
 
@@ -34,9 +33,7 @@ func (r *BrowseResp) Init() *BrowseResp {
 
 func (r *BrowseResp) SetResult(result any) {
 	data, _ := xml.Marshal(result)
-	buf := &bytes.Buffer{}
-	xml.EscapeText(buf, data)
-	r.Result = buf.String()
+	r.Result = string(data)
 }
 
 type SearchReq struct {

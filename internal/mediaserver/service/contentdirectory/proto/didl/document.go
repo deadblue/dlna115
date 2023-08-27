@@ -15,13 +15,12 @@ type Document struct {
 	Namespace     string   `xml:"xmlns,attr"`
 	NamespaceDc   string   `xml:"xmlns:dc,attr"`
 	NamespaceUpnp string   `xml:"xmlns:upnp,attr"`
-	NamespaceSec  string   `xml:"xmlns:sec,attr"`
 	NamespaceDlna string   `xml:"xmlns:dlna,attr"`
 
 	// Container objects
-	Container []Container `xml:"container"`
+	Container []Container `xml:"container,omitempty"`
 	// Item objects
-	Item []Item `xml:"item"`
+	Item []Item `xml:"item,omitempty"`
 }
 
 func (d *Document) Init() *Document {

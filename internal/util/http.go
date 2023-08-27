@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	mimeType = "text/xml"
+	mimeType = "text/xml; charset=\"utf-8\""
 )
 
 func RenderXML(rw http.ResponseWriter, doc any) {

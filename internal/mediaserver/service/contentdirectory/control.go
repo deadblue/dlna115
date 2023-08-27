@@ -49,7 +49,7 @@ func (s *Service) HandleControl(rw http.ResponseWriter, req *http.Request) {
 	var resp any
 	switch name {
 	case actionBrowse:
-		resp, err = s.handleActionBrowse(payload[begin:end])
+		resp, err = s.handleActionBrowse(payload[begin:end], req.Host)
 	}
 	// Render response
 	if err != nil {
@@ -60,7 +60,7 @@ func (s *Service) HandleControl(rw http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (s *Service) handleActionBrowse(payload []byte) (ret any, err error) {
+func (s *Service) handleActionBrowse(payload []byte, host string) (ret any, err error) {
 	req := &proto.BrowseReq{}
 	if err = xml.Unmarshal(payload, req); err != nil {
 		return
@@ -91,11 +91,13 @@ func (s *Service) handleActionBrowse(payload []byte) (ret any, err error) {
 			obj.Res.NrAudioChannels = item.AudioChannels
 			obj.Res.SampleFrequency = item.AudioSampleRate
 			obj.Res.Resolution = item.VideoResolution
-			obj.Res.URL = item.PlayURL
+			// Make full URL
+			obj.Res.URL = fmt.Sprintf("http://%s%s", host, item.PlayURL)
 			// Calculate bitrate
 			obj.Res.Bitrate = int(float64(item.Size) / item.Duration)
 			// Format Duration
 			obj.Res.Duration = formatDuration(item.Duration)
+			result.AppendItem(obj)
 			resp.TotalMatches += 1
 		}
 	}

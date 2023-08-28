@@ -3,6 +3,7 @@ package storage115
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/deadblue/elevengo"
 )
@@ -36,12 +37,25 @@ func (s *Service) HandleSetup(rw http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Service) HandleVideo(rw http.ResponseWriter, req *http.Request) {
-	var err error
-	fileCode := req.URL.Path[videoUrlLen:]
+	fileName := req.URL.Path[videoUrlLen:]
+	if len(fileName) == 0 {
+		rw.WriteHeader(http.StatusForbidden)
+		return
+	}
+	// Get pickcode & extension name
+	dotIndex := strings.IndexRune(fileName, '.')
+	if dotIndex < 0 {
+		rw.WriteHeader(http.StatusNotFound)
+		return
+	}
+	pickCode, extName := fileName[:dotIndex], fileName[dotIndex+1:]
+	if extName != "m3u8" {
+		rw.WriteHeader(http.StatusNotFound)
+		return
+	}
 	ticket := &elevengo.VideoTicket{}
-	if err = s.ea.VideoCreateTicket(fileCode, ticket); err != nil {
-		// TODO: Send error to client
-		rw.WriteHeader(http.StatusBadRequest)
+	if err := s.ea.VideoCreateTicket(pickCode, ticket); err != nil {
+		rw.WriteHeader(http.StatusNotFound)
 		return
 	}
 	http.Redirect(rw, req, ticket.Url, http.StatusTemporaryRedirect)

@@ -30,7 +30,7 @@ func (s *Service) Browse(parentId string) (items []storageservice.Item) {
 			item.Size = file.Size
 			item.Duration = file.MediaDuration
 			// Make play URL
-			item.PlayURL = fmt.Sprintf("%s%s", VideoURL, file.PickCode)
+			item.PlayURL = fmt.Sprintf("%s%s.m3u8", VideoURL, file.PickCode)
 			// GUESS resoltion from video definition
 			switch file.VideoDefinition {
 			case elevengo.VideoDefinitionSD:

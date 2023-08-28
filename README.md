@@ -1,6 +1,8 @@
 # DLNA115
 
-A minimal UPnP MediaServer implementation to browse and play video files from 115 cloud storage.
+A minimal UPnP MediaServer implementation to browse and play video files on 115 cloud storage.
+
+NOTE: This project is still Working-In-Progress.
 
 
 ## Usage

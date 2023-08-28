@@ -11,7 +11,7 @@ import (
 func (s *Service) HandleEvent(rw http.ResponseWriter, req *http.Request) {
 	if req.Method == upnp.MethodSubscribe {
 		subId := fmt.Sprintf("uuid:%s", uuid.NewString())
-		req.Header.Set("SID", subId)
+		rw.Header().Set("SID", subId)
 	}
 	rw.WriteHeader(http.StatusOK)
 }

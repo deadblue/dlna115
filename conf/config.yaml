@@ -1,0 +1,36 @@
+# Media server settings
+media:
+  # Listening port, default value is 8115.
+  port: 8155
+  # Unique ID, server will automatically generate one if you do not set.
+  uuid: ""
+  # Server friendly name, default value is "115@<hostname>"
+  name: ""
+
+# 115 storage settings
+storage:
+  # A source for getting 115 credential.
+  credential-source:
+    # Credential source type: file, url, command
+    type: file
+    # For "file" type, source should be full path of the file.
+    # For "url" type, source should be the URL.
+    # For "command" type, source should be the command line.
+    source: /var/115/cookie.json
+  # Folders to show under root directory.
+  top-folders:
+    # A virtual folder which contains stared files.
+    # You can set DisplayName to override default name: Favorites.
+    - "star[:DisplayName]"
+    # A virtual folder which contains files with given label.
+    # You can set DisplayName to override default name.
+    - "label:LabelName[:DisplayName]"
+    # A folder on storage.
+    # You can set DisplayName to override default name.
+    - "folder:FolderPath[:DisplayName]"
+
+# SSDP settings
+ssdp:
+  # Start an simple SSDP server to handle search request.
+  # Set it to false if there is already an SSPD daemon running on your system.
+  server: true

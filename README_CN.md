@@ -1,13 +1,13 @@
 # DLNA115
 
-一个极简的 UPnP MediaServer 实现，基于 DLNA 协议提供 115 网盘上视频文件的浏览和播放。
+一个极简的 UPnP MediaServer 实现，可浏览和播放 115 网盘上视频文件。
 
 
 ## 用法
 
-1. 在你的电脑/NAS，其他接入局域网的设备上运行 dlna115 服务。
+1. 在你的电脑、NAS、或其他接入局域网的设备上运行 dlna115 服务。
 
-2. 在你的手机/平板/电脑上，打开支持 UPnP 的播放器（例如VLC），115 的 MediaServer 将出现在 Local Network 中。
+2. 在你的手机、平板或电脑上，打开支持 UPnP 的播放器（例如VLC），115 的 MediaServer 将出现在 Local Network 中。
 
 3. Enjoy!
 

@@ -8,7 +8,7 @@ import (
 
 	"github.com/deadblue/dlna115/internal/mediaserver/service/contentdirectory/proto"
 	"github.com/deadblue/dlna115/internal/mediaserver/service/contentdirectory/proto/didl"
-	"github.com/deadblue/dlna115/internal/mediaserver/service/storageservice"
+	"github.com/deadblue/dlna115/internal/mediaserver/service/storage"
 	"github.com/deadblue/dlna115/internal/soap"
 	"github.com/deadblue/dlna115/internal/util"
 )
@@ -71,7 +71,7 @@ func (s *Service) handleActionBrowse(payload []byte, host string) (ret any, err 
 	items := s.ss.Browse(req.ObjectID)
 	for _, item := range items {
 		switch item := item.(type) {
-		case *storageservice.Dir:
+		case *storage.Dir:
 			// Make container object
 			obj := (&didl.StorageFolderContainer{}).Init()
 			obj.ID = item.ID
@@ -80,7 +80,7 @@ func (s *Service) handleActionBrowse(payload []byte, host string) (ret any, err 
 			obj.Title = item.Name
 			result.AppendContainer(obj)
 			resp.TotalMatches += 1
-		case *storageservice.VideoFile:
+		case *storage.VideoFile:
 			// Make videoItem object
 			obj := (&didl.VideoItem{}).Init()
 			obj.ID = item.ID

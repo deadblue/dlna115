@@ -1,4 +1,4 @@
-package storageservice
+package storage
 
 // StorageService defines a interface which should be impled by storage service.
 // It will be used by ContentDirectory service to browse files.

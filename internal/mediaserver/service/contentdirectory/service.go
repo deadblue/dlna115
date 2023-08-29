@@ -1,14 +1,12 @@
 package contentdirectory
 
-import (
-	"github.com/deadblue/dlna115/internal/mediaserver/service/storageservice"
-)
+import "github.com/deadblue/dlna115/internal/mediaserver/service/storage"
 
 type Service struct {
-	ss storageservice.StorageService
+	ss storage.StorageService
 }
 
-func New(ss storageservice.StorageService) *Service {
+func New(ss storage.StorageService) *Service {
 	return &Service{
 		ss: ss,
 	}

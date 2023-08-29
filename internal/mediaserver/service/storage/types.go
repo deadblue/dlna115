@@ -1,4 +1,4 @@
-package storageservice
+package storage
 
 type ItemType int
 

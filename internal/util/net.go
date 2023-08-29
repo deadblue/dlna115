@@ -5,6 +5,21 @@ import (
 	"net"
 )
 
+func InterfaceHasIPv4(nif *net.Interface) bool {
+	if addrs, err := nif.Addrs(); err == nil {
+		for _, addr := range addrs {
+			if addr.Network() != "ip+net" {
+				continue
+			}
+			ipnet := addr.(*net.IPNet)
+			if ipnet.IP.To4() != nil {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 // ForAllIPs calls fn with all local IPs
 func ForAllIPs(skipLoopback bool, fn func(net.IP)) {
 	nis, err := net.Interfaces()

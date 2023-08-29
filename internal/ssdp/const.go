@@ -27,5 +27,5 @@ const (
 )
 
 var (
-	serverAddr, _ = net.ResolveUDPAddr("udp4", "239.255.255.250:1900")
+	multicastAddr, _ = net.ResolveUDPAddr("udp4", "239.255.255.250:1900")
 )

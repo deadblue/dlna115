@@ -4,12 +4,16 @@ import (
 	"net"
 
 	"github.com/deadblue/dlna115/internal/upnp"
+	"golang.org/x/net/ipv4"
 )
 
 // Server is a simple SSDP server implementation.
 type Server struct {
-	// UDP connection
-	conn *net.UDPConn
+	// Joined net interfaces
+	jnis []net.Interface
+	// Packet connection
+	pc *ipv4.PacketConn
+
 	// Done channel
 	done chan struct{}
 	// UPnP device

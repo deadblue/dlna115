@@ -1,3 +1,36 @@
+# 115 storage settings
+storage:
+
+  # A source for getting 115 credential.
+  credential-source:
+    # Credential source type: "file" or "url"
+    type: file
+    # For "file" type, source should be full path of the file.
+    # For "url" type, source should be the URL.
+    source: /path/to/cookie.txt
+
+  # Top folders which will be shown under root directory.
+  top-folders:
+
+    # A virtual folder which contains stared files.
+    - type: "star"
+      # You can set name to override default name.
+      name: "Favorites"
+
+    # A virtual folder which contains files with given label.
+    - type: "label"
+      # Target must be set, and should be a label name.
+      target: "label-name"
+      # Default value is the label name.
+      name: ""
+
+    # A directory on storage.
+    - type: "dir"
+      # Target must be set, and should be a the directory path.
+      target: "parent/child1/child2"
+      # Default value is the base name of directory.
+      name: ""
+
 # Media server settings
 media:
   # Listening port, default value is 8115.
@@ -6,31 +39,3 @@ media:
   uuid: ""
   # Server friendly name, default value is "115@<hostname>"
   name: ""
-
-# 115 storage settings
-storage:
-  # A source for getting 115 credential.
-  credential-source:
-    # Credential source type: file, url, command
-    type: file
-    # For "file" type, source should be full path of the file.
-    # For "url" type, source should be the URL.
-    # For "command" type, source should be the command line.
-    source: /var/115/cookie.json
-  # Folders to show under root directory.
-  top-folders:
-    # A virtual folder which contains stared files.
-    # You can set DisplayName to override default name: Favorites.
-    - "star[:DisplayName]"
-    # A virtual folder which contains files with given label.
-    # You can set DisplayName to override default name.
-    - "label:LabelName[:DisplayName]"
-    # A folder on storage.
-    # You can set DisplayName to override default name.
-    - "folder:FolderPath[:DisplayName]"
-
-# SSDP settings
-ssdp:
-  # Start an simple SSDP server to handle search request.
-  # Set it to false if there is already an SSPD daemon running on your system.
-  server: true

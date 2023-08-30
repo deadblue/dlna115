@@ -2,9 +2,9 @@ package mediaserver
 
 type Options struct {
 	// Listening port
-	Port uint
+	Port uint `yaml:"port,omitempty"`
 	// Unique ID
-	UUID string
+	UUID string `yaml:"uuid,omitempty"`
 	// Friendly name
-	Name string
+	Name string `yaml:"name,omitempty"`
 }

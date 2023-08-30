@@ -1,6 +1,7 @@
 .vscode
 
 *_test.go
-cmd/test/*
+cmd/test/
+assets/test/
 
 dist/

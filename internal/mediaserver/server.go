@@ -8,6 +8,8 @@ import (
 	"github.com/deadblue/dlna115/internal/mediaserver/service/contentdirectory"
 	"github.com/deadblue/dlna115/internal/mediaserver/service/storage115"
 	"github.com/deadblue/dlna115/internal/upnp"
+	"github.com/deadblue/dlna115/internal/util"
+	"github.com/google/uuid"
 )
 
 type Server struct {
@@ -30,9 +32,9 @@ type Server struct {
 	desc []byte
 }
 
-func New(opts *Options) *Server {
+func New(opts *Options, sopts *storage115.Options) *Server {
 	// Instantiate services
-	ss := storage115.New()
+	ss := storage115.New(sopts)
 	cds := contentdirectory.New(ss)
 	cms := connectionmanager.New()
 
@@ -40,12 +42,15 @@ func New(opts *Options) *Server {
 	s := &Server{
 		cf:  0,
 		ec:  make(chan error, 1),
-		sp:  opts.Port,
+		sp:  util.DefaultNumber(opts.Port, 8115),
 		hs:  &http.Server{},
-		udn: fmt.Sprintf("uuid:%s", opts.UUID),
 		uss: []upnp.Service{cds, cms},
 	}
-	s.initDesc(opts.Name)
+	s.udn = fmt.Sprintf(
+		"uuid:%s",
+		util.DefaultStringFunc(opts.UUID, uuid.NewString),
+	)
+	s.initDesc(util.DefaultString(opts.Name, "115"))
 
 	// Create HTTP handler
 	mux := http.NewServeMux()

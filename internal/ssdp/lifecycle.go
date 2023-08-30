@@ -66,7 +66,6 @@ func (s *Server) loop() {
 			}
 			break
 		}
-		log.Printf("Receive SSDP message from [%s]:\n%s", src.String(), buf[:size])
 		raddr := src.(*net.UDPAddr)
 		req := &Request{}
 		if err = req.Unmarshal(buf[:size]); err == nil {

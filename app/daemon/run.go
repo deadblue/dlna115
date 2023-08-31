@@ -9,11 +9,11 @@ import (
 	"github.com/deadblue/dlna115/pkg/ssdp"
 )
 
-// Run starts daemon process.
-func Run() (err error) {
-	opts := &Options{}
-	if err = opts.Init(); err != nil {
-		log.Fatal(err)
+func (c *Command) Run() (err error) {
+	// Load and parse config file
+	options := &Options{}
+	if err := options.Load(c.ConfigFile); err != nil {
+		log.Fatalf("Load config file failed: %s", err)
 	}
 
 	// Handle OS signal
@@ -25,9 +25,9 @@ func Run() (err error) {
 	}()
 
 	// Create & start media server
-	ms := mediaserver.New(&opts.Media, &opts.Storage)
+	ms := mediaserver.New(&options.Media, &options.Storage)
 	// Start media service
-	if err = ms.Startup(); err != nil {
+	if err := ms.Startup(); err != nil {
 		log.Fatal(err)
 	}
 	ssdp.NotifyDeviceAvailable(ms)
@@ -52,25 +52,5 @@ func Run() (err error) {
 	<-ms.ErrChan()
 
 	log.Printf("Byebye")
-
-	// Loop
-	// for running := true; running; {
-	// 	select {
-	// 	case <-sigChan:
-	// 		log.Printf("Shutdown DLNA media server ...")
-	// 		ssdp.NotifyDeviceUnavailable(ms)
-	// 		ms.Shutdown()
-	// 	case err = <-ms.ErrChan():
-	// 		if err != nil {
-	// 			log.Printf("Media server closed with error: %s", err)
-	// 		} else {
-	// 			log.Println("Media server closed normally!")
-	// 		}
-	// 		// Shutdown SSDP server
-	// 		ss.Shutdown()
-	// 	case <-ss.Done():
-	// 		running = false
-	// 	}
-	// }
 	return
 }

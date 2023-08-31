@@ -1,7 +1,6 @@
 package daemon
 
 import (
-	"flag"
 	"os"
 
 	"github.com/deadblue/dlna115/pkg/mediaserver"
@@ -16,14 +15,7 @@ type Options struct {
 	Media mediaserver.Options `yaml:"media"`
 }
 
-func (opts *Options) Init() (err error) {
-	// Get config file from command line
-	fs := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
-	var configFile string
-	fs.StringVar(&configFile, "config", "", "Config file")
-	if err = fs.Parse(os.Args[1:]); err != nil {
-		return
-	}
+func (opts *Options) Load(configFile string) (err error) {
 	// Parse config file
 	file, err := os.Open(configFile)
 	if err != nil {

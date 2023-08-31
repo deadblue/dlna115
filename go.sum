@@ -1,5 +1,7 @@
 github.com/deadblue/elevengo v0.5.3 h1:SbcsupOGRRULopG8eeGoOaBXxpsVit70mXQ93Uvz+aQ=
 github.com/deadblue/elevengo v0.5.3/go.mod h1:gVSSLDXU0CGoeOikN1lQo22VasUAJdHyaCGmLx7puVI=
+github.com/deadblue/qrascii v0.0.1 h1:N1JEM3Pz5Rti2WdjDIWMyFoR6LUld2+aO2xGT2/Vpdg=
+github.com/deadblue/qrascii v0.0.1/go.mod h1:wmV7In0C2lHsIjpfx3FNpCAL0P3VJNZRFxSURd++LwA=
 github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
 github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 golang.org/x/net v0.14.0 h1:BONx9s002vGdD9umnlX1Po8vOZmrgH34qlHcD1MfK14=

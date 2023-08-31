@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 
-	"github.com/deadblue/dlna115/internal/util"
+	"github.com/deadblue/dlna115/pkg/util"
 	"golang.org/x/net/ipv4"
 )
 

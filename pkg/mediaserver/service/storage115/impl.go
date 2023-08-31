@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/deadblue/dlna115/internal/mediaserver/service/storage"
+	"github.com/deadblue/dlna115/pkg/mediaserver/service/storage"
 	"github.com/deadblue/elevengo"
 )
 

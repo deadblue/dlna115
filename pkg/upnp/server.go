@@ -3,7 +3,7 @@ package upnp
 import (
 	"fmt"
 
-	"github.com/deadblue/dlna115/internal/util"
+	"github.com/deadblue/dlna115/pkg/util"
 )
 
 var (

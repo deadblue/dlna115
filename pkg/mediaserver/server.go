@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/deadblue/dlna115/internal/mediaserver/service/connectionmanager"
-	"github.com/deadblue/dlna115/internal/mediaserver/service/contentdirectory"
-	"github.com/deadblue/dlna115/internal/mediaserver/service/storage115"
-	"github.com/deadblue/dlna115/internal/upnp"
-	"github.com/deadblue/dlna115/internal/util"
+	"github.com/deadblue/dlna115/pkg/mediaserver/service/connectionmanager"
+	"github.com/deadblue/dlna115/pkg/mediaserver/service/contentdirectory"
+	"github.com/deadblue/dlna115/pkg/mediaserver/service/storage115"
+	"github.com/deadblue/dlna115/pkg/upnp"
+	"github.com/deadblue/dlna115/pkg/util"
 	"github.com/google/uuid"
 )
 

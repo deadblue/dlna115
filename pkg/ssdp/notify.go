@@ -3,8 +3,8 @@ package ssdp
 import (
 	"net"
 
-	"github.com/deadblue/dlna115/internal/upnp"
-	"github.com/deadblue/dlna115/internal/util"
+	"github.com/deadblue/dlna115/pkg/upnp"
+	"github.com/deadblue/dlna115/pkg/util"
 )
 
 // NotifyDeviceAvailable broadcasts a device available advertisement on all

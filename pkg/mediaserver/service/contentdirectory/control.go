@@ -6,11 +6,11 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/deadblue/dlna115/internal/mediaserver/service/contentdirectory/proto"
-	"github.com/deadblue/dlna115/internal/mediaserver/service/contentdirectory/proto/didl"
-	"github.com/deadblue/dlna115/internal/mediaserver/service/storage"
-	"github.com/deadblue/dlna115/internal/soap"
-	"github.com/deadblue/dlna115/internal/util"
+	"github.com/deadblue/dlna115/pkg/mediaserver/service/contentdirectory/proto"
+	"github.com/deadblue/dlna115/pkg/mediaserver/service/contentdirectory/proto/didl"
+	"github.com/deadblue/dlna115/pkg/mediaserver/service/storage"
+	"github.com/deadblue/dlna115/pkg/soap"
+	"github.com/deadblue/dlna115/pkg/util"
 )
 
 const (

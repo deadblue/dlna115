@@ -5,7 +5,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/deadblue/dlna115/internal/upnp"
+	"github.com/deadblue/dlna115/pkg/upnp"
 )
 
 func (s *Server) handleRequest(raddr *net.UDPAddr, req *Request) {

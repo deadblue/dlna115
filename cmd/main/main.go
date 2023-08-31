@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/deadblue/dlna115/internal/daemon"
+	"github.com/deadblue/dlna115/app/daemon"
 )
 
 func main() {

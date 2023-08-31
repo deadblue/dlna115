@@ -5,8 +5,8 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/deadblue/dlna115/internal/mediaserver"
-	"github.com/deadblue/dlna115/internal/ssdp"
+	"github.com/deadblue/dlna115/pkg/mediaserver"
+	"github.com/deadblue/dlna115/pkg/ssdp"
 )
 
 // Run starts daemon process.

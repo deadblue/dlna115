@@ -4,8 +4,8 @@ import (
 	"flag"
 	"os"
 
-	"github.com/deadblue/dlna115/internal/mediaserver"
-	"github.com/deadblue/dlna115/internal/mediaserver/service/storage115"
+	"github.com/deadblue/dlna115/pkg/mediaserver"
+	"github.com/deadblue/dlna115/pkg/mediaserver/service/storage115"
 	"gopkg.in/yaml.v3"
 )
 

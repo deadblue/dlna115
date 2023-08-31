@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/deadblue/dlna115/internal/upnp"
-	"github.com/deadblue/dlna115/internal/upnp/device"
+	"github.com/deadblue/dlna115/pkg/upnp"
+	"github.com/deadblue/dlna115/pkg/upnp/device"
 )
 
 const (

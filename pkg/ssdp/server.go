@@ -3,7 +3,7 @@ package ssdp
 import (
 	"net"
 
-	"github.com/deadblue/dlna115/internal/upnp"
+	"github.com/deadblue/dlna115/pkg/upnp"
 	"golang.org/x/net/ipv4"
 )
 

@@ -1,7 +1,7 @@
 package connectionmanager
 
 import (
-	"github.com/deadblue/dlna115/internal/upnp"
+	"github.com/deadblue/dlna115/pkg/upnp"
 )
 
 // ----- |upup.Service| implementation Begin -----

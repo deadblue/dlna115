@@ -102,40 +102,56 @@ func (s *Service) initTopFolders() (err error) {
 	}
 	err = nil
 
-	for _, tfo := range s.opts.TopFolders {
-		tf := &Folder{
-			Type: tfo.Type,
-		}
-		switch tfo.Type {
-		case FolderTypeStar:
-			tf.Type = FolderTypeStar
-			tf.Name = util.DefaultString(tfo.Name, "Favorites")
-		case FolderTypeLabel:
-			if labelId, ok := labelMap[tfo.Target]; ok {
-				tf.SourceId = labelId
-				tf.Name = util.DefaultString(tfo.Name, tfo.Target)
-			} else {
+	if s.opts.TopFolders != nil {
+		for _, tfo := range s.opts.TopFolders {
+			tf := &Folder{
+				Type: tfo.Type,
+			}
+			switch tfo.Type {
+			case FolderTypeStar:
+				tf.Type = FolderTypeStar
+				tf.Name = util.DefaultString(tfo.Name, "Favorites")
+			case FolderTypeLabel:
+				if labelId, ok := labelMap[tfo.Target]; ok {
+					tf.SourceId = labelId
+					tf.Name = util.DefaultString(tfo.Name, tfo.Target)
+				} else {
+					tf = nil
+				}
+			case FolderTypeDir:
+				if dirId, err := s.ea.DirGetId(tfo.Target); err == nil {
+					tf.SourceId = dirId
+					tf.Name = util.DefaultStringFunc(
+						tfo.Name, func() string {
+							return filepath.Base(tfo.Target)
+						},
+					)
+				} else {
+					tf = nil
+				}
+			default:
+				log.Printf("Unsupported folder type: %s", tfo.Type)
 				tf = nil
 			}
-		case FolderTypeDir:
-			if dirId, err := s.ea.DirGetId(tfo.Target); err == nil {
-				tf.SourceId = dirId
-				tf.Name = util.DefaultStringFunc(
-					tfo.Name, func() string {
-						return filepath.Base(tfo.Target)
-					},
-				)
-			} else {
-				tf = nil
+			if tf != nil {
+				log.Printf("Add top folder: %s", tf.Name)
+				s.tfs = append(s.tfs, tf)
 			}
-		default:
-			log.Printf("Unsupported folder type: %s", tfo.Type)
-			tf = nil
-		}
-		if tf != nil {
-			s.tfs = append(s.tfs, tf)
 		}
 	}
-	// TODO: Add some default folder when top folders is empty
+	// Add default top folders when user not set
+	if len(s.tfs) == 0 {
+		s.tfs = []*Folder{
+			{
+				Type: FolderTypeStar,
+				Name: "Favorites",
+			},
+			{
+				Type:     FolderTypeDir,
+				Name:     "All Files",
+				SourceId: "0",
+			},
+		}
+	}
 	return
 }

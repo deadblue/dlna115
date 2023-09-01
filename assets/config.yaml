@@ -7,7 +7,9 @@ storage:
     type: file
     # For "file" type, source should be full path of the file.
     # For "url" type, source should be the URL.
-    source: /path/to/cookie.txt
+    source: /path/to/credential.txt
+    # Secret key to decrypt credential.
+    secret: ""
 
   # Top folders which will be shown under root directory.
   top-folders:

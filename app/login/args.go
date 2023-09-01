@@ -18,6 +18,8 @@ func (c *Command) Init(args []string) (err error) {
 	var platform string
 	fs.StringVar(&platform, "platform", defaultPlatform, "")
 	fs.StringVar(&platform, "p", defaultPlatform, "")
+	fs.StringVar(&c.secret, "secret", "", "")
+	fs.StringVar(&c.secret, "s", "", "")
 	if err = fs.Parse(args); err != nil {
 		return
 	}
@@ -25,20 +27,20 @@ func (c *Command) Init(args []string) (err error) {
 	// Save args
 	switch platform {
 	case "mac":
-		c.Platform = option.QrcodeLoginMac
+		c.platform = option.QrcodeLoginMac
 	case "windows":
-		c.Platform = option.QrcodeLoginWindows
+		c.platform = option.QrcodeLoginWindows
 	default:
-		c.Platform = option.QrcodeLoginLinux
+		c.platform = option.QrcodeLoginLinux
 	}
 	if fs.NArg() > 0 {
-		c.SaveFile = fs.Arg(0)
+		c.saveFile = fs.Arg(0)
 	}
 	return
 }
 
 const usageTemplate = `
-Usage: %s [-p paltform] [save-file]
+Usage: %s [-p paltform] [-k crypto-key] [save-file]
 
 Description:
     %s
@@ -46,12 +48,14 @@ Description:
 Arguments:
     -p, -platform <platform>
         Simulte login on given platform.
-        Supported platform: linux/mac/windows
+        Supported platform: linux/mac/windows, default is linux.
+	-s, -secret <secret-key>
+	    Secret key to encrypt credential, keep it secret!
     save-file
-        File to save login cookie.
+        File to save cookie.
 
 Example: 
-    %s -p linux cookie.txt
+    %s -p linux -s sesame cookie.txt
 
 `
 

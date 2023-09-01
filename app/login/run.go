@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/deadblue/dlna115/pkg/credential"
 	"github.com/deadblue/elevengo"
 	"github.com/deadblue/qrascii"
 )
@@ -15,7 +16,7 @@ import (
 func (c *Command) Run() (err error) {
 	agent := elevengo.Default()
 	session := &elevengo.QrcodeSession{}
-	if err = agent.QrcodeStart(session, c.Platform); err != nil {
+	if err = agent.QrcodeStart(session, c.platform); err != nil {
 		log.Fatalf("Start login session failed: %s", err)
 	}
 
@@ -34,7 +35,7 @@ func (c *Command) Run() (err error) {
 		// QRCode expired or canceled
 		if err != nil {
 			// Request new QRCode
-			err = agent.QrcodeStart(session, c.Platform)
+			err = agent.QrcodeStart(session, c.platform)
 			if err == nil {
 				// Replace old QRCode
 				lineCount := strings.Count(qrAscii, "\n") + 1
@@ -46,26 +47,21 @@ func (c *Command) Run() (err error) {
 	// Login successed, export cookie
 	cred := &elevengo.Credential{}
 	agent.CredentialExport(cred)
+	credData := credential.Encode(cred, c.secret)
 
 	var file *os.File
-	if c.SaveFile != "" {
-		file, _ = os.OpenFile(c.SaveFile, os.O_WRONLY|os.O_CREATE, 0644)
+	if c.saveFile != "" {
+		var ferr error
+		if file, ferr = os.OpenFile(c.saveFile, os.O_WRONLY|os.O_CREATE, 0644); ferr != nil {
+			println("Can not open file to write: %s", c.saveFile)
+		}
 	}
-	useStdout := file == nil
-	if useStdout {
-		file = os.Stdout
-		println("Please save follow cookies to a file.\n")
-	}
-	defer file.Close()
-
-	fmt.Fprintf(file, "UID=%s\n", cred.UID)
-	fmt.Fprintf(file, "CID=%s\n", cred.CID)
-	fmt.Fprintf(file, "SEID=%s\n", cred.SEID)
-
-	if useStdout {
-		println()
+	if file == nil {
+		fmt.Printf("Please save credential to a file: \n\n%s\n\n", credData)
 	} else {
-		fmt.Printf("Cookies saved at: %s\n\n", c.SaveFile)
+		defer file.Close()
+		file.WriteString(credData)
+		fmt.Printf("Credential saved at: %s\n\n", c.saveFile)
 	}
 	return
 }

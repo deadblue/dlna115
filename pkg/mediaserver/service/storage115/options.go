@@ -1,15 +1,14 @@
 package storage115
 
 import (
-	"bufio"
 	"errors"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 
+	"github.com/deadblue/dlna115/pkg/credential"
 	"github.com/deadblue/dlna115/pkg/util"
 	"github.com/deadblue/elevengo"
 )
@@ -30,6 +29,7 @@ var (
 type CredentialSourceOption struct {
 	Type   string `yaml:"type"`
 	Source string `yaml:"source"`
+	Secret string `yaml:"secret"`
 }
 
 type TopFolderOption struct {
@@ -57,8 +57,6 @@ func (s *Service) ApplyOptions() (err error) {
 
 func (s *Service) loadCredential() (err error) {
 	src := &s.opts.CredentialSource
-	cred := &elevengo.Credential{}
-
 	// Open stream of source
 	var r io.ReadCloser
 	switch src.Type {
@@ -76,27 +74,17 @@ func (s *Service) loadCredential() (err error) {
 	}
 	defer r.Close()
 
-	// The credential content shoule be in this form:
-	//		UID=UID_from_Cookie
-	//		CID=CID_from_Cookie
-	//		SEID=SEID_from_Cookie
-
-	// Read file line by line
-	for s := bufio.NewScanner(r); s.Scan(); {
-		line := s.Text()
-		sepIndex := strings.IndexRune(line, '=')
-		name := strings.TrimSpace(line[:sepIndex])
-		value := strings.TrimSpace(line[sepIndex+1:])
-		switch name {
-		case "UID":
-			cred.UID = value
-		case "CID":
-			cred.CID = value
-		case "SEID":
-			cred.SEID = value
-		}
+	// Read credential data
+	credData, err := io.ReadAll(r)
+	if err != nil {
+		return
 	}
-	return s.ea.CredentialImport(cred)
+	// Decode credential
+	cred := &elevengo.Credential{}
+	if err = credential.Decode(credData, src.Secret, cred); err == nil {
+		err = s.ea.CredentialImport(cred)
+	}
+	return
 }
 
 func (s *Service) initTopFolders() (err error) {
@@ -148,5 +136,6 @@ func (s *Service) initTopFolders() (err error) {
 			s.tfs = append(s.tfs, tf)
 		}
 	}
+	// TODO: Add some default folder when top folders is empty
 	return
 }

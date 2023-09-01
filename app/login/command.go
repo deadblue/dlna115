@@ -6,12 +6,16 @@ import (
 
 const (
 	name = "login"
-	desc = "Simulate 115 client login and export cookies."
+	desc = "Simulate 115 client login and export credential."
 )
 
 type Command struct {
-	Platform option.QrcodeLoginOption
-	SaveFile string
+	// Platform to login
+	platform option.QrcodeLoginOption
+	// Secret to encrypt cookie
+	secret string
+	// File to save cookie
+	saveFile string
 }
 
 func (c *Command) Name() string {

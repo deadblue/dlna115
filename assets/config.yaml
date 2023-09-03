@@ -33,6 +33,10 @@ storage:
       # Default value is the base name of directory.
       name: ""
 
+  # Do not use HLS for video.
+  # Set this to true if you UPnP player does not support HLS.
+  disable-hls: false
+
 # Media server settings
 media:
   # Listening port, default value is 8115.

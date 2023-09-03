@@ -44,7 +44,7 @@ func (s *Service) browseDir(dirId string) []storage.Item {
 	if err != nil {
 		return emptyItems
 	} else {
-		return createItemList(it)
+		return s.createItemList(it)
 	}
 }
 
@@ -53,7 +53,7 @@ func (s *Service) browseStar() []storage.Item {
 	if err != nil {
 		return emptyItems
 	} else {
-		return createItemList(it)
+		return s.createItemList(it)
 	}
 }
 
@@ -62,11 +62,11 @@ func (s *Service) browseLabel(labelId string) []storage.Item {
 	if err != nil {
 		return emptyItems
 	} else {
-		return createItemList(it)
+		return s.createItemList(it)
 	}
 }
 
-func createItemList(it elevengo.Iterator[elevengo.File]) []storage.Item {
+func (s *Service) createItemList(it elevengo.Iterator[elevengo.File]) []storage.Item {
 	items := make([]storage.Item, 0)
 	var err error
 	for ; err == nil; err = it.Next() {
@@ -77,7 +77,7 @@ func createItemList(it elevengo.Iterator[elevengo.File]) []storage.Item {
 		if file.IsDirectory {
 			items = append(items, createDir(file))
 		} else if file.IsVideo {
-			items = append(items, createVideoFile(file))
+			items = append(items, createVideoFile(file, s.opts.DisableHLS))
 		}
 	}
 	return items
@@ -90,14 +90,20 @@ func createDir(file *elevengo.File) (item *storage.Dir) {
 	return
 }
 
-func createVideoFile(file *elevengo.File) (item *storage.VideoFile) {
+func createVideoFile(file *elevengo.File, disableHLS bool) (item *storage.VideoFile) {
 	item = &storage.VideoFile{}
 	item.ID = file.FileId
 	item.Name = file.Name
 	item.Size = file.Size
 	item.Duration = file.MediaDuration
 	// Make play URL
-	item.PlayURL = fmt.Sprintf("%s%s.m3u8", VideoURL, file.PickCode)
+	playType := PlayTypeStream
+	if disableHLS {
+		playType = PlayTypeFile
+	}
+	item.PlayURL = fmt.Sprintf(
+		"%s%s/%s", VideoURL, playType, file.PickCode,
+	)
 	// GUESS resoltion from video definition
 	switch file.VideoDefinition {
 	case elevengo.VideoDefinitionSD:

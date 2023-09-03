@@ -43,6 +43,8 @@ type Options struct {
 	CredentialSource CredentialSourceOption `yaml:"credential-source"`
 	// Top folder config
 	TopFolders []TopFolderOption `yaml:"top-folders,omitempty"`
+	// Do not use HLS url
+	DisableHLS bool `yaml:"disable-hls"`
 }
 
 func (s *Service) ApplyOptions() (err error) {

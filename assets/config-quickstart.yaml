@@ -1,0 +1,4 @@
+storage:
+  credential-source:
+    type: "file"
+    source: "/path/to/credential.txt"

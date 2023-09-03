@@ -29,7 +29,7 @@ var (
 type CredentialSourceOption struct {
 	Type   string `yaml:"type"`
 	Source string `yaml:"source"`
-	Secret string `yaml:"secret"`
+	Secret string `yaml:"secret,omitempty"`
 }
 
 type TopFolderOption struct {
@@ -42,7 +42,7 @@ type Options struct {
 	// Credential source
 	CredentialSource CredentialSourceOption `yaml:"credential-source"`
 	// Top folder config
-	TopFolders []TopFolderOption `yaml:"top-folders"`
+	TopFolders []TopFolderOption `yaml:"top-folders,omitempty"`
 }
 
 func (s *Service) ApplyOptions() (err error) {

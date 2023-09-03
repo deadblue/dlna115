@@ -1,13 +1,13 @@
 # 115 storage settings
 storage:
 
-  # A source for getting 115 credential.
+  # Source to get 115 credential.
   credential-source:
     # Credential source type: "file" or "url"
-    type: file
+    type: "file"
     # For "file" type, source should be full path of the file.
     # For "url" type, source should be the URL.
-    source: /path/to/credential.txt
+    source: "/path/to/credential.txt"
     # Secret key to decrypt credential.
     secret: ""
 
@@ -36,8 +36,8 @@ storage:
 # Media server settings
 media:
   # Listening port, default value is 8115.
-  port: 8155
+  port: 8115
   # Unique ID, server will automatically generate one if you do not set.
   uuid: ""
-  # Server friendly name, default value is "115@<hostname>"
+  # Server friendly name, default value is "115"
   name: ""

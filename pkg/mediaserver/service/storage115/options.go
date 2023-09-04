@@ -49,6 +49,7 @@ type Options struct {
 
 func (s *Service) ApplyOptions() (err error) {
 	if err = s.loadCredential(); err != nil {
+		log.Printf("Load credential failed: %s", err)
 		return
 	}
 	if err = s.initTopFolders(); err != nil {
@@ -77,6 +78,7 @@ func (s *Service) loadCredential() (err error) {
 	defer r.Close()
 
 	// Read credential data
+	log.Printf("Loading credential from %s: %s", src.Type, src.Source)
 	credData, err := io.ReadAll(r)
 	if err != nil {
 		return

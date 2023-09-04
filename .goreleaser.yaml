@@ -30,13 +30,16 @@ archives:
         strip_parent: true
       - src: "assets/config-quickstart.yaml"
         strip_parent: true
+
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
+
 snapshot:
   name_template: "{{ incpatch .Version }}-next"
+
+release:
+  prerelease: auto
+  mode: keep-existing
+
 changelog:
-  sort: asc
-  filters:
-    exclude:
-      - '^docs:'
-      - '^test:'
+  skip: true

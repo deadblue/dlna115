@@ -40,7 +40,7 @@ func (c *Command) Init(args []string) (err error) {
 }
 
 const usageTemplate = `
-Usage: %s [-p paltform] [-k crypto-key] [save-file]
+Usage: %s [-p paltform] [-s secret-key] [save-file]
 
 Description:
     %s
@@ -49,13 +49,13 @@ Arguments:
     -p, -platform <platform>
         Simulte login on given platform.
         Supported platform: linux/mac/windows, default is linux.
-	-s, -secret <secret-key>
-	    Secret key to encrypt credential, keep it secret!
+    -s, -secret <secret-key>
+        Secret key to encrypt credential, keep it secret!
     save-file
-        File to save cookie.
+        File to save credential.
 
 Example: 
-    %s -p linux -s sesame cookie.txt
+    %s -p linux -s sesame credential.txt
 
 `
 

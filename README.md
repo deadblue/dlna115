@@ -1,29 +1,14 @@
 # DLNA115
 
-A minimal UPnP MediaServer implementation to browse and play video files on 115 cloud storage.
+一个极简的 UPnP MediaServer 实现，可浏览和播放 115 网盘上视频文件。
 
-NOTE: This project is still Working-In-Progress.
+![Discovery&Browse](docs/screenshot-1_4.png)
+![Play](docs/screenshot-5.png)
 
+## 使用说明
 
-## Usage
+* [快速启动](https://github.com/deadblue/dlna115/wiki/Quick-Start)
 
-1. Run `dlna115` on your PC/NAS or other device which is connected to your LAN.
-
-2. On your Mobile/Pad/PC, open a Player with UPnP supported (e.g. VLC), you will see your MediaServer in "Local Network".
-
-3. Enjoy!
-
-
-## Why not offical client?
-
-* Advantages:
-  * There is no limit of device count, all devices in your LAN can play videos from 115 storage.
-  * You can play video on a platform which supports UPnP but is not supported by 115, such as PlayStation, XBox, etc.
-* Disadvantages:
-  * Can not remember playback histroy.
-  * Do not support subtitles.
-
-
-## LICENSE
+## 开源协议
 
 MIT

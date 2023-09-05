@@ -9,10 +9,13 @@ import (
 	"github.com/deadblue/dlna115/app"
 	"github.com/deadblue/dlna115/app/daemon"
 	"github.com/deadblue/dlna115/app/login"
+	"github.com/deadblue/dlna115/pkg/version"
 )
 
 const (
 	usagePrefix = `
+%s 
+
 Usage: %s <command> [command-arguments]
 
 Commands:
@@ -42,7 +45,7 @@ func (cr *CommandRegistry) Register(cmds ...app.Command) {
 
 func (cr *CommandRegistry) PrintUsage(prog string) {
 	sb := &strings.Builder{}
-	fmt.Fprintf(sb, usagePrefix, prog)
+	fmt.Fprintf(sb, usagePrefix, version.Full(), prog)
 	for _, name := range cr.names {
 		cmd := cr.cmds[name]
 		fmt.Fprintf(sb, "    %s\t%s\n", name, cmd.Desc())

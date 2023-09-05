@@ -1,5 +1,9 @@
 package util
 
 var (
-	OsVersion = getOsVersion()
+	osVer = getOsVersion()
 )
+
+func OsVersion() string {
+	return osVer
+}

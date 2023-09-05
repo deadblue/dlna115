@@ -7,9 +7,12 @@ import (
 
 	"github.com/deadblue/dlna115/pkg/mediaserver"
 	"github.com/deadblue/dlna115/pkg/ssdp"
+	"github.com/deadblue/dlna115/pkg/version"
 )
 
 func (c *Command) Run() (err error) {
+	// Print full version at beginning
+	log.Println(version.Full())
 	// Load and parse config file
 	options := &Options{}
 	if err := options.Load(c.ConfigFile); err != nil {

@@ -1,10 +1,10 @@
-package storage115
+package impl
 
 import (
 	"fmt"
 	"strings"
 
-	"github.com/deadblue/dlna115/pkg/mediaserver/service/storage"
+	"github.com/deadblue/dlna115/pkg/storage"
 	"github.com/deadblue/elevengo"
 )
 

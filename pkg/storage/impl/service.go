@@ -1,4 +1,4 @@
-package storage115
+package impl
 
 import (
 	"github.com/deadblue/elevengo"
@@ -28,6 +28,5 @@ func New(opts *Options) (s *Service) {
 		opts: opts,
 		ea:   elevengo.Default(),
 	}
-	s.ApplyOptions()
 	return
 }

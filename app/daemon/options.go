@@ -4,13 +4,13 @@ import (
 	"os"
 
 	"github.com/deadblue/dlna115/pkg/mediaserver"
-	"github.com/deadblue/dlna115/pkg/mediaserver/service/storage115"
+	"github.com/deadblue/dlna115/pkg/storage/impl"
 	"gopkg.in/yaml.v3"
 )
 
 type Options struct {
 	// Storage options
-	Storage storage115.Options `yaml:"storage"`
+	Storage impl.Options `yaml:"storage"`
 	// Media options
 	Media mediaserver.Options `yaml:"media"`
 }

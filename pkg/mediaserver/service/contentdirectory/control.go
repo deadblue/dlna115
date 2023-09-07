@@ -8,8 +8,8 @@ import (
 
 	"github.com/deadblue/dlna115/pkg/mediaserver/service/contentdirectory/proto"
 	"github.com/deadblue/dlna115/pkg/mediaserver/service/contentdirectory/proto/didl"
-	"github.com/deadblue/dlna115/pkg/mediaserver/service/storage"
 	"github.com/deadblue/dlna115/pkg/soap"
+	"github.com/deadblue/dlna115/pkg/storage"
 	"github.com/deadblue/dlna115/pkg/util"
 )
 

@@ -1,6 +1,6 @@
 package contentdirectory
 
-import "github.com/deadblue/dlna115/pkg/mediaserver/service/storage"
+import "github.com/deadblue/dlna115/pkg/storage"
 
 type Service struct {
 	ss storage.StorageService

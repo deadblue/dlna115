@@ -1,4 +1,4 @@
-package storage115
+package impl
 
 import (
 	"fmt"
@@ -21,7 +21,7 @@ const (
 	videoUrlLen = len(VideoURL)
 )
 
-func (s *Service) RegisterTo(mux *http.ServeMux) {
+func (s *Service) MountTo(mux *http.ServeMux) {
 	mux.HandleFunc(VideoURL, s.HandleVideo)
 }
 

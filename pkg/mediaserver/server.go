@@ -6,7 +6,7 @@ import (
 
 	"github.com/deadblue/dlna115/pkg/mediaserver/service/connectionmanager"
 	"github.com/deadblue/dlna115/pkg/mediaserver/service/contentdirectory"
-	"github.com/deadblue/dlna115/pkg/mediaserver/service/storage115"
+	"github.com/deadblue/dlna115/pkg/storage"
 	"github.com/deadblue/dlna115/pkg/upnp"
 	"github.com/deadblue/dlna115/pkg/util"
 	"github.com/google/uuid"
@@ -32,35 +32,33 @@ type Server struct {
 	desc []byte
 }
 
-func New(opts *Options, sopts *storage115.Options) *Server {
+func New(opts *Options, ss storage.StorageService) *Server {
 	// Instantiate services
-	ss := storage115.New(sopts)
 	cds := contentdirectory.New(ss)
 	cms := connectionmanager.New()
+
+	// Create HTTP handler
+	mux := http.NewServeMux()
+	// Mount storage handlers
+	ss.MountTo(mux)
+	// Register service handlers
+	cds.RegisterTo(mux)
+	cms.RegisterTo(mux)
 
 	// Make server
 	s := &Server{
 		cf:  0,
 		ec:  make(chan error, 1),
 		sp:  util.DefaultNumber(opts.Port, 8115),
-		hs:  &http.Server{},
+		hs:  &http.Server{Handler: mux},
 		uss: []upnp.Service{cds, cms},
 	}
 	s.udn = fmt.Sprintf(
 		"uuid:%s",
 		util.DefaultStringFunc(opts.UUID, uuid.NewString),
 	)
-	s.initDesc(util.DefaultString(opts.Name, "115"))
-
-	// Create HTTP handler
-	mux := http.NewServeMux()
 	// Device description URL
+	s.initDesc(util.DefaultString(opts.Name, "115"))
 	mux.HandleFunc(descUrl, s.handleDescXml)
-	// Register service URLs
-	ss.RegisterTo(mux)
-	cds.RegisterTo(mux)
-	cms.RegisterTo(mux)
-	// Set handler to HTTP server
-	s.hs.Handler = mux
 	return s
 }

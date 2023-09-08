@@ -3,6 +3,7 @@ package impl
 import (
 	"fmt"
 	"io"
+	"log"
 	"mime"
 	"net/http"
 	"path/filepath"
@@ -53,8 +54,14 @@ func (s *Service) HandleVideo(rw http.ResponseWriter, req *http.Request) {
 			s.sendVideoStream(rw, req, ticket)
 		}
 	case PlayTypeFile:
-		ticket := &elevengo.DownloadTicket{}
-		if err = s.ea.DownloadCreateTicket(pickCode, ticket); err == nil {
+		ticket, ok := s.dtc.Get(pickCode)
+		if !ok {
+			ticket = &elevengo.DownloadTicket{}
+			if err = s.ea.DownloadCreateTicket(pickCode, ticket); err == nil {
+				s.dtc.Put(pickCode, ticket)
+			}
+		}
+		if ticket != nil {
 			s.sendVideoFile(rw, req, ticket)
 		}
 	default:
@@ -83,10 +90,16 @@ func (s *Service) sendVideoFile(rw http.ResponseWriter, req *http.Request, ticke
 	}
 
 	var body io.ReadCloser
+	var err error
 	if start == 0 {
-		body, _ = s.ea.Fetch(ticket.Url)
+		body, err = s.ea.Fetch(ticket.Url)
 	} else {
-		body, _ = s.ea.FetchRange(ticket.Url, elevengo.RangeMiddle(start, -1))
+		body, err = s.ea.FetchRange(ticket.Url, elevengo.RangeMiddle(start, -1))
+	}
+	if err != nil {
+		log.Printf("Fetch video from remote failed: %s", err)
+		rw.WriteHeader(http.StatusBadGateway)
+		return
 	}
 	defer body.Close()
 
@@ -105,5 +118,6 @@ func (s *Service) sendVideoFile(rw http.ResponseWriter, req *http.Request, ticke
 		rw.Header().Set("Content-Range", contentRange)
 		rw.WriteHeader(http.StatusPartialContent)
 	}
+	// Send video data
 	io.Copy(rw, body)
 }

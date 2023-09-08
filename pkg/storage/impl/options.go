@@ -150,11 +150,6 @@ func (s *Service) initTopFolders() (err error) {
 				Type: FolderTypeStar,
 				Name: "Favorites",
 			},
-			{
-				Type:     FolderTypeDir,
-				Name:     "All Files",
-				SourceId: "0",
-			},
 		}
 	}
 	return

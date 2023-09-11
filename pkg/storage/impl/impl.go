@@ -76,7 +76,7 @@ func (s *Service) createItemList(it elevengo.Iterator[elevengo.File]) []storage.
 		}
 		if file.IsDirectory {
 			items = append(items, createDir(file))
-		} else if file.IsVideo {
+		} else if file.IsVideo && file.VideoDefinition > 0 {
 			items = append(items, createVideoFile(file, s.opts.DisableHLS))
 		}
 	}
@@ -96,14 +96,7 @@ func createVideoFile(file *elevengo.File, disableHLS bool) (item *storage.VideoF
 	item.Name = file.Name
 	item.Size = file.Size
 	item.Duration = file.MediaDuration
-	// Make play URL
-	playType := PlayTypeStream
-	if disableHLS {
-		playType = PlayTypeFile
-	}
-	item.PlayURL = fmt.Sprintf(
-		"%s%s/%s", VideoURL, playType, file.PickCode,
-	)
+	item.PlayURL = generatePlayUrl(file, disableHLS)
 	// GUESS resoltion from video definition
 	switch file.VideoDefinition {
 	case elevengo.VideoDefinitionSD:

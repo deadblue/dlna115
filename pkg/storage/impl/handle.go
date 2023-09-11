@@ -1,12 +1,14 @@
 package impl
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"mime"
 	"net/http"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -14,87 +16,151 @@ import (
 )
 
 const (
-	VideoURL = "/storage/video/"
+	PlayURL = "/storage/video/"
 
-	PlayTypeStream = "stream"
-	PlayTypeFile   = "file"
+	PlayTypeHls  = "hls"
+	PlayTypeFile = "file"
 
-	videoUrlLen = len(VideoURL)
+	playUrlLen = len(PlayURL)
 )
 
-func (s *Service) MountTo(mux *http.ServeMux) {
-	mux.HandleFunc(VideoURL, s.HandleVideo)
+var (
+	rePlayPath = regexp.MustCompile(`^(\w+)-(\w+)/(\w+)\.(\w+)$`)
+
+	errInvalidPath = errors.New("invalid request path")
+
+	errUnsupportedType = errors.New("unsupported play type")
+)
+
+type PlayRequest struct {
+	// Indicate whether it is a HEAD request
+	IsHead bool
+
+	// Play type
+	Type string
+	// Video extension
+	VideoExt string
+
+	// Video pick code
+	PickCode string
+	// Request extension
+	RequestExt string
+
+	// Range start for "file" type
+	RangeStart int64
 }
 
-func (s *Service) HandleVideo(rw http.ResponseWriter, req *http.Request) {
-	// Parse request path
-	relPath := req.URL.Path[videoUrlLen:]
-	if len(relPath) == 0 {
-		rw.WriteHeader(http.StatusForbidden)
-		return
+func (r *PlayRequest) Parse(req *http.Request) (err error) {
+	// Check request method
+	r.IsHead = req.Method == http.MethodHead
+	// Extract parameters from path
+	relPath := req.URL.Path[playUrlLen:]
+	match := rePlayPath.FindAllStringSubmatch(relPath, 1)
+	if len(match) == 0 || len(match[0]) != 5 {
+		return errInvalidPath
 	}
-	parts := strings.SplitN(relPath, "/", 2)
-	if len(parts) < 2 {
-		rw.WriteHeader(http.StatusNotFound)
-		return
+	r.Type = match[0][1]
+	r.VideoExt = match[0][2]
+	r.PickCode = match[0][3]
+	r.RequestExt = match[0][4]
+	// Parse range start
+	if r.Type == PlayTypeFile {
+		if reqRange := req.Header.Get("Range"); reqRange != "" {
+			index := strings.IndexRune(reqRange, '-')
+			r.RangeStart, _ = strconv.ParseInt(reqRange[6:index], 10, 64)
+		}
 	}
-	playType, pickCode := parts[0], parts[1]
+	return
+}
 
-	// check pickcode
-	if strings.IndexRune(pickCode, '.') > 0 {
-		rw.WriteHeader(http.StatusNotFound)
-		return
+func generatePlayUrl(file *elevengo.File, disableHLS bool) string {
+	// Determine play type
+	playType := PlayTypeHls
+	if disableHLS {
+		playType = PlayTypeFile
 	}
+	extName := filepath.Ext(file.Name)
+	// Build play url
+	return fmt.Sprintf(
+		"%s%s-%s/%s%s",
+		PlayURL,
+		playType, extName[1:],
+		file.PickCode, extName,
+	)
+}
 
+func (s *Service) MountTo(mux *http.ServeMux) {
+	mux.HandleFunc(PlayURL, s.HandlePlay)
+}
+
+func (s *Service) HandlePlay(rw http.ResponseWriter, req *http.Request) {
 	var err error
-	switch playType {
-	case PlayTypeStream:
-		ticket := &elevengo.VideoTicket{}
-		if err = s.ea.VideoCreateTicket(pickCode, ticket); err == nil {
-			s.sendVideoStream(rw, req, ticket)
-		}
-	case PlayTypeFile:
-		ticket, ok := s.dtc.Get(pickCode)
-		if !ok {
-			ticket = &elevengo.DownloadTicket{}
-			if err = s.ea.DownloadCreateTicket(pickCode, ticket); err == nil {
-				s.dtc.Put(pickCode, ticket)
-			}
-		}
-		if ticket != nil {
-			s.sendVideoFile(rw, req, ticket)
-		}
-	default:
-		rw.WriteHeader(http.StatusForbidden)
+	pr := &PlayRequest{}
+	if err = pr.Parse(req); err != nil {
+		log.Printf("Parse play request failed: %s", err)
+		rw.WriteHeader(http.StatusNotFound)
 		return
+	}
+	// Check request ext with video ext
+	if pr.RequestExt != pr.VideoExt {
+		rw.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	switch pr.Type {
+	case PlayTypeHls:
+		err = s.handlePlayHls(rw, pr)
+	case PlayTypeFile:
+		err = s.handlePlayFile(rw, pr)
+	default:
+		err = errUnsupportedType
 	}
 	if err != nil {
 		rw.WriteHeader(http.StatusNotFound)
 	}
 }
 
-func (s *Service) sendVideoStream(rw http.ResponseWriter, req *http.Request, ticket *elevengo.VideoTicket) {
+func (s *Service) handlePlayHls(rw http.ResponseWriter, req *PlayRequest) (err error) {
+	ticket, ok := s.vtc.Get(req.PickCode)
+	if !ok {
+		ticket = &elevengo.VideoTicket{}
+		if err = s.ea.VideoCreateTicket(req.PickCode, ticket); err == nil {
+			s.vtc.Put(req.PickCode, ticket)
+		}
+	}
+	if err != nil {
+		return
+	}
+
+	// Fetch HLS content from upstream
 	body, _ := s.ea.Fetch(ticket.Url)
 	defer body.Close()
 
+	// Send to client
 	rw.Header().Set("Content-Type", "application/x-mpegURL")
 	rw.WriteHeader(http.StatusOK)
 	io.Copy(rw, body)
+
+	return
 }
 
-func (s *Service) sendVideoFile(rw http.ResponseWriter, req *http.Request, ticket *elevengo.DownloadTicket) {
-	var start int64 = 0
-	if reqRange := req.Header.Get("Range"); reqRange != "" {
-		index := strings.IndexRune(reqRange, '-')
-		start, _ = strconv.ParseInt(reqRange[6:index], 10, 64)
+func (s *Service) handlePlayFile(rw http.ResponseWriter, req *PlayRequest) (err error) {
+	ticket, ok := s.dtc.Get(req.PickCode)
+	if !ok {
+		ticket = &elevengo.DownloadTicket{}
+		if err = s.ea.DownloadCreateTicket(req.PickCode, ticket); err == nil {
+			s.dtc.Put(req.PickCode, ticket)
+		}
+	}
+	if err != nil {
+		return
 	}
 
 	var body io.ReadCloser
-	var err error
-	if start == 0 {
+	if req.RangeStart == 0 {
 		body, err = s.ea.Fetch(ticket.Url)
 	} else {
-		body, err = s.ea.FetchRange(ticket.Url, elevengo.RangeMiddle(start, -1))
+		body, err = s.ea.FetchRange(ticket.Url, elevengo.RangeMiddle(req.RangeStart, -1))
 	}
 	if err != nil {
 		log.Printf("Fetch video from remote failed: %s", err)
@@ -103,21 +169,22 @@ func (s *Service) sendVideoFile(rw http.ResponseWriter, req *http.Request, ticke
 	}
 	defer body.Close()
 
-	ext := filepath.Ext(ticket.FileName)
-	rw.Header().Set("Content-Type", mime.TypeByExtension(ext))
-	if start == 0 {
+	rw.Header().Set("Content-Type", mime.TypeByExtension(req.VideoExt))
+	if req.RangeStart == 0 {
 		rw.Header().Set("Content-Length", strconv.FormatInt(ticket.FileSize, 10))
 		rw.WriteHeader(http.StatusOK)
 	} else {
-		contentSize := ticket.FileSize - start
+		contentSize := ticket.FileSize - req.RangeStart
 		rw.Header().Set("Content-Length", strconv.FormatInt(contentSize, 10))
 		contentRange := fmt.Sprintf(
 			"bytes %d-%d/%d",
-			start, ticket.FileSize-1, ticket.FileSize,
+			req.RangeStart, ticket.FileSize-1, ticket.FileSize,
 		)
 		rw.Header().Set("Content-Range", contentRange)
 		rw.WriteHeader(http.StatusPartialContent)
 	}
 	// Send video data
 	io.Copy(rw, body)
+
+	return
 }

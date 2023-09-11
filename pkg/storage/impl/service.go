@@ -1,10 +1,13 @@
 package impl
 
 import (
+	"net"
+	"net/http"
 	"time"
 
 	"github.com/deadblue/dlna115/pkg/util"
 	"github.com/deadblue/elevengo"
+	"github.com/deadblue/elevengo/option"
 )
 
 type Folder struct {
@@ -23,6 +26,9 @@ type Service struct {
 	ea *elevengo.Agent
 	// Top folders
 	tfs []*Folder
+
+	// Video ticket cache
+	vtc *util.TTLCache[*elevengo.VideoTicket]
 	// Download ticket cache
 	dtc *util.TTLCache[*elevengo.DownloadTicket]
 }
@@ -30,8 +36,32 @@ type Service struct {
 func New(opts *Options) (s *Service) {
 	s = &Service{
 		opts: opts,
-		ea:   elevengo.Default(),
-		dtc:  util.NewCache[*elevengo.DownloadTicket](time.Minute * 30),
+		ea:   newAgent(),
+
+		vtc: util.NewCache[*elevengo.VideoTicket](time.Minute * 30),
+		dtc: util.NewCache[*elevengo.DownloadTicket](time.Minute * 30),
 	}
 	return
+}
+
+func newAgent() *elevengo.Agent {
+	// Setup dialer
+	dialer := &net.Dialer{
+		Resolver: &net.Resolver{
+			PreferGo: true,
+		},
+	}
+	dialer.SetMultipathTCP(true)
+	// Setup http transport
+	transport := http.DefaultTransport.(*http.Transport).Clone()
+	transport.DialContext = dialer.DialContext
+	transport.MaxIdleConnsPerHost = 10
+	// Custom http client of elevengo.Agent
+	return elevengo.New(
+		&option.AgentHttpOption{
+			Client: &http.Client{
+				Transport: transport,
+			},
+		},
+	)
 }

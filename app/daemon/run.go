@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"syscall"
 
 	"github.com/deadblue/dlna115/pkg/mediaserver"
 	"github.com/deadblue/dlna115/pkg/ssdp"
@@ -29,7 +30,7 @@ func (c *Command) Run() (err error) {
 
 	// Handle OS signal
 	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, os.Interrupt)
+	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
 	defer func() {
 		signal.Stop(sigChan)
 		close(sigChan)

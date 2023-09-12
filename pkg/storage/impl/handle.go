@@ -18,16 +18,18 @@ import (
 const (
 	PlayURL = "/storage/video/"
 
+	playUrlLen = len(PlayURL)
+
 	PlayTypeHls  = "hls"
 	PlayTypeFile = "file"
-
-	playUrlLen = len(PlayURL)
 )
 
 var (
 	rePlayPath = regexp.MustCompile(`^(\w+)-(\w+)/(\w+)\.(\w+)$`)
 
 	errInvalidPath = errors.New("invalid request path")
+
+	errInvalidExt = errors.New("invalid request extension")
 
 	errUnsupportedType = errors.New("unsupported play type")
 )
@@ -63,7 +65,11 @@ func (r *PlayRequest) Parse(req *http.Request) (err error) {
 	r.VideoExt = match[0][2]
 	r.PickCode = match[0][3]
 	r.RequestExt = match[0][4]
-	// Parse range start
+	// Check parameters
+	if r.VideoExt != r.RequestExt {
+		return errInvalidExt
+	}
+	// Parse range start for "file"
 	if r.Type == PlayTypeFile {
 		if reqRange := req.Header.Get("Range"); reqRange != "" {
 			index := strings.IndexRune(reqRange, '-')
@@ -74,18 +80,16 @@ func (r *PlayRequest) Parse(req *http.Request) (err error) {
 }
 
 func generatePlayUrl(file *elevengo.File, disableHLS bool) string {
+	videoExt := (filepath.Ext(file.Name))[1:]
 	// Determine play type
 	playType := PlayTypeHls
 	if disableHLS {
 		playType = PlayTypeFile
 	}
-	extName := filepath.Ext(file.Name)
-	// Build play url
+	// Build play URL
 	return fmt.Sprintf(
-		"%s%s-%s/%s%s",
-		PlayURL,
-		playType, extName[1:],
-		file.PickCode, extName,
+		"%s%s-%s/%s.%s",
+		PlayURL, playType, videoExt, file.PickCode, videoExt,
 	)
 }
 
@@ -97,12 +101,6 @@ func (s *Service) HandlePlay(rw http.ResponseWriter, req *http.Request) {
 	var err error
 	pr := &PlayRequest{}
 	if err = pr.Parse(req); err != nil {
-		log.Printf("Parse play request failed: %s", err)
-		rw.WriteHeader(http.StatusNotFound)
-		return
-	}
-	// Check request ext with video ext
-	if pr.RequestExt != pr.VideoExt {
 		rw.WriteHeader(http.StatusNotFound)
 		return
 	}

@@ -1,0 +1,20 @@
+site_name: DLNA115
+
+theme:
+  name: material
+  icon:
+    logo: material/play-box
+  features: navigation.instant
+  palette: 
+    scheme: slate
+    primary: deep orange
+    accent: deep orange
+  
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+remote_branch: gh-pages

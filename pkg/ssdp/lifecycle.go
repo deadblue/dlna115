@@ -11,7 +11,7 @@ import (
 
 func (s *Server) Startup() (err error) {
 	// Create packet connection
-	npc, err := net.ListenPacket("udp4", ":1900")
+	npc, err := util.ListenUdp4Packet(":1900")
 	if err != nil {
 		return
 	}

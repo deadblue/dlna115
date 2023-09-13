@@ -46,7 +46,9 @@ func (c *Command) Run() (err error) {
 
 	// Create & start SSDP server
 	ss := ssdp.NewServer(ms)
-	_ = ss.Startup()
+	if serr := ss.Startup(); serr != nil {
+		log.Printf("Start SSDP server failed: %s", serr)
+	}
 
 	// Wait OS signal
 	<-sigChan
@@ -54,12 +56,14 @@ func (c *Command) Run() (err error) {
 
 	// Shutdown SSDP server
 	ss.Shutdown()
+
 	// Shutdown media server
 	ssdp.NotifyDeviceUnavailable(ms)
 	ms.Shutdown()
 
 	// Wait SSDP server shutdown
 	<-ss.Done()
+
 	// Wait media server shutdown
 	<-ms.ErrChan()
 

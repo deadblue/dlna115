@@ -1,8 +1,10 @@
 package util
 
 import (
+	"context"
 	"io"
 	"net"
+	"syscall"
 )
 
 func InterfaceHasIPv4(nif *net.Interface) bool {
@@ -69,4 +71,13 @@ func Broadcast(msg io.WriterTo, localIp net.IP, remoteAddr *net.UDPAddr) (err er
 	}
 	_, err = msg.WriteTo(conn)
 	return
+}
+
+func ListenUdp4Packet(addr string) (net.PacketConn, error) {
+	lc := net.ListenConfig{
+		Control: func(network, address string, c syscall.RawConn) error {
+			return c.Control(socketControl)
+		},
+	}
+	return lc.ListenPacket(context.Background(), "udp4", addr)
 }

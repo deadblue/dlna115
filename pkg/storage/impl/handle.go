@@ -100,21 +100,18 @@ func (s *Service) MountTo(mux *http.ServeMux) {
 func (s *Service) HandlePlay(rw http.ResponseWriter, req *http.Request) {
 	var err error
 	pr := &PlayRequest{}
-	if err = pr.Parse(req); err != nil {
-		rw.WriteHeader(http.StatusNotFound)
-		return
-	}
-
-	switch pr.Type {
-	case PlayTypeHls:
-		err = s.handlePlayHls(rw, pr)
-	case PlayTypeFile:
-		err = s.handlePlayFile(rw, pr)
-	default:
-		err = errUnsupportedType
+	if err = pr.Parse(req); err == nil {
+		switch pr.Type {
+		case PlayTypeHls:
+			err = s.handlePlayHls(rw, pr)
+		case PlayTypeFile:
+			err = s.handlePlayFile(rw, pr)
+		default:
+			err = errUnsupportedType
+		}
 	}
 	if err != nil {
-		rw.WriteHeader(http.StatusNotFound)
+		http.NotFound(rw, req)
 	}
 }
 

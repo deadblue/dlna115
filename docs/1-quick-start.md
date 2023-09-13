@@ -6,9 +6,9 @@
 
 [https://github.com/deadblue/dlna115/releases](https://github.com/deadblue/dlna115/releases)
 
-## 设置与启动
+## 配置与运行
 
-### 导出 115 凭证
+### 导出凭证
 
 在终端中执行：
 
@@ -16,14 +16,14 @@
 dlna115 login <credential.txt>
 ```
 
-运行后将会看到一个二维码，请在 115 手机客户端上扫码登录，登录完成后凭证信息会导出到指定的文件中。
+运行后将会看到一个二维码，请通过 115 手机客户端扫码登录，登录完成后凭证信息会导出到指定的文件中。
 
 !!! Note
 
     Windows 用户需要在 [Windows Terminal](https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701) 中执行此命令，否则在终端中打印的二维码将无法被扫描。
 
 
-### 修改配置文件
+### 配置服务
 
 编辑 `config-quickstart.yaml` ，将第一步导入的凭证文件的路径填写到`source`字段中。
 
@@ -36,7 +36,7 @@ storage:
     source: "凭证文件路径"
 ```
 
-### 启动 DLNA 服务
+### 启动服务
 
 执行如下命令，启动服务。
 

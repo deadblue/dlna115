@@ -4,12 +4,13 @@ theme:
   name: material
   icon:
     logo: material/play-box
-  features: navigation.instant
+  features: 
+    - navigation.instant
   palette: 
     scheme: slate
     primary: deep orange
     accent: deep orange
-  
+
 markdown_extensions:
   - admonition
   - pymdownx.details

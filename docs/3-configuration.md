@@ -55,13 +55,13 @@ media:
 
 ## storage | 115网盘配置
 
-**disable-hls**
+**`disable-hls`: Boolean**
 
-是否禁用 HLS，默认值 `false`。
+> 是否禁用 HLS，默认值 `false`。
+> 
+> 当使用不支持 HLS 的播放器时，可将此选项设置为 `true`。
 
-当使用不支持 HLS 的播放器时，可将此选项设置为 `true`。
-
-禁用 HLS 后， MediaServer 将从网盘下载视频内容，并推送给客户端，对 CPU 和内存的占用会增大。
+> 禁用 HLS 后， MediaServer 将从网盘下载视频内容，并推送给客户端，对 CPU 和内存的占用会增大。
 
 ### credential-source | 凭证来源
 

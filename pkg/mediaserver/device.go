@@ -62,4 +62,9 @@ func (s *Server) GetDeviceDescURL(ip string) string {
 	)
 }
 
+func (s *Server) DeviceIsTarget(targetType string) bool {
+	return targetType == upnp.DeviceTypeMediaServer1 ||
+		targetType == upnp.ServiceTypeContentDirectory1
+}
+
 // ----- |upnp.Device| implementation End -----

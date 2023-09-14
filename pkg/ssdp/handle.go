@@ -22,7 +22,7 @@ func (s *Server) handleSearch(raddr *net.UDPAddr, req *Request) {
 	}
 	// Check search target
 	target := req.GetHeader(headerSearchTarget)
-	if target != searchAll && target != s.device.DeviceType() {
+	if target != searchAll && !s.device.DeviceIsTarget(target) {
 		return
 	}
 

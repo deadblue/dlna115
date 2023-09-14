@@ -13,4 +13,6 @@ type Device interface {
 	DeviceUSN() string
 	// GetDeviceDescURL returns device desc URL on given ip.
 	GetDeviceDescURL(ip string) string
+	// DeviceIsTarget indicates whether device matches the searching target.
+	DeviceIsTarget(targetType string) bool
 }

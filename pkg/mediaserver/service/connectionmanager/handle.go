@@ -3,13 +3,13 @@ package connectionmanager
 import "net/http"
 
 const (
-	descUrl    = "/ConnectionManager/scpd.xml"
-	controlUrl = "/ConnectionManager/control"
-	eventUrl   = "/ConnectionManager/event"
+	_DescUrl    = "/ConnectionManager/scpd.xml"
+	_ControlUrl = "/ConnectionManager/control"
+	_EventUrl   = "/ConnectionManager/event"
 )
 
-func (s *Service) RegisterTo(mux *http.ServeMux) {
-	mux.HandleFunc(descUrl, s.HandleDescXml)
-	mux.HandleFunc(controlUrl, s.HandleControl)
-	mux.HandleFunc(eventUrl, s.HandleEvent)
+func (s *Service) MountTo(mux *http.ServeMux) {
+	mux.HandleFunc(_DescUrl, s.HandleDescXml)
+	mux.HandleFunc(_ControlUrl, s.HandleControl)
+	mux.HandleFunc(_EventUrl, s.HandleEvent)
 }

@@ -15,15 +15,15 @@ func (s *Service) ServiceId() string {
 }
 
 func (s *Service) ServiceDescURL() string {
-	return descUrl
+	return _DescUrl
 }
 
 func (s *Service) ServiceControlURL() string {
-	return controlUrl
+	return _ControlUrl
 }
 
 func (s *Service) ServiceEventURL() string {
-	return eventUrl
+	return _EventUrl
 }
 
 // ----- |upup.Service| implementation End -----

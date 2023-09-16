@@ -83,20 +83,30 @@ func (s *Service) handleActionBrowse(payload []byte, host string) (ret any, err 
 		case *storage.VideoFile:
 			// Make videoItem object
 			obj := (&didl.VideoItem{}).Init()
-			obj.ID = item.ID
 			obj.ParentID = req.ObjectID
+			obj.ID = item.ID
 			obj.Title = item.Name
-			obj.Res.ProtocolInfo = "http-get:*:video/mp4:*"
+			obj.Res.ProtocolInfo = fmt.Sprintf("http-get:*:%s:*", item.MimeType)
 			obj.Res.Size = item.Size
 			obj.Res.NrAudioChannels = item.AudioChannels
 			obj.Res.SampleFrequency = item.AudioSampleRate
 			obj.Res.Resolution = item.VideoResolution
 			// Make full URL
-			obj.Res.URL = fmt.Sprintf("http://%s%s", host, item.PlayURL)
+			obj.Res.URL = fmt.Sprintf("http://%s%s%s", host, _ViewUrl, item.URLPath)
 			// Calculate bitrate
 			obj.Res.Bitrate = int(float64(item.Size) / item.Duration)
 			// Format Duration
-			obj.Res.Duration = formatDuration(item.Duration)
+			obj.Res.Duration = didl.FormatDuration(item.Duration)
+			result.AppendItem(obj)
+			resp.TotalMatches += 1
+		case *storage.ImageFile:
+			obj := (&didl.ImageItem{}).Init()
+			obj.ParentID = req.ObjectID
+			obj.ID = item.ID
+			obj.Title = item.Name
+			obj.Res.ProtocolInfo = fmt.Sprintf("http-get:*:%s:*", item.MimeType)
+			obj.Res.Size = item.Size
+			obj.Res.URL = fmt.Sprintf("http://%s%s%s", host, _ViewUrl, item.URLPath)
 			result.AppendItem(obj)
 			resp.TotalMatches += 1
 		}
@@ -105,12 +115,4 @@ func (s *Service) handleActionBrowse(payload []byte, host string) (ret any, err 
 	resp.SetResult(result)
 	ret = resp
 	return
-}
-
-func formatDuration(seconds float64) string {
-	m := int(seconds / 60)
-	s := seconds - float64(m*60)
-	h := int(m / 60)
-	m = m % 60
-	return fmt.Sprintf("%d:%02d:%06.3f", h, m, s)
 }

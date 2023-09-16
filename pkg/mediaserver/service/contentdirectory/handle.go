@@ -3,13 +3,19 @@ package contentdirectory
 import "net/http"
 
 const (
-	descUrl    = "/ContentDirectory/scpd.xml"
-	controlUrl = "/ContentDirectory/control"
-	eventUrl   = "/ContentDirectory/event"
+	_DescUrl    = "/ContentDirectory/scpd.xml"
+	_ControlUrl = "/ContentDirectory/control"
+	_EventUrl   = "/ContentDirectory/event"
+
+	// View URL for viewing file content
+	_ViewUrl = "/ContentDirectory/view/"
+
+	_ViewUrlLen = len(_ViewUrl)
 )
 
-func (s *Service) RegisterTo(mux *http.ServeMux) {
-	mux.HandleFunc(descUrl, s.HandleDescXml)
-	mux.HandleFunc(controlUrl, s.HandleControl)
-	mux.HandleFunc(eventUrl, s.HandleEvent)
+func (s *Service) MountTo(mux *http.ServeMux) {
+	mux.HandleFunc(_DescUrl, s.HandleDescXml)
+	mux.HandleFunc(_ControlUrl, s.HandleControl)
+	mux.HandleFunc(_EventUrl, s.HandleEvent)
+	mux.HandleFunc(_ViewUrl, s.HandleView)
 }

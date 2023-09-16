@@ -20,6 +20,8 @@ const (
 	FolderTypeDir   = "dir"
 	FolderTypeStar  = "star"
 	FolderTypeLabel = "label"
+
+	DefaultNameStar = "Favorites"
 )
 
 var (
@@ -114,7 +116,7 @@ func (s *Service) initTopFolders() (err error) {
 			switch tfo.Type {
 			case FolderTypeStar:
 				tf.Type = FolderTypeStar
-				tf.Name = util.DefaultString(tfo.Name, "Favorites")
+				tf.Name = util.DefaultString(tfo.Name, DefaultNameStar)
 			case FolderTypeLabel:
 				if labelId, ok := labelMap[tfo.Target]; ok {
 					tf.SourceId = labelId
@@ -148,7 +150,7 @@ func (s *Service) initTopFolders() (err error) {
 		s.tfs = []*Folder{
 			{
 				Type: FolderTypeStar,
-				Name: "Favorites",
+				Name: DefaultNameStar,
 			},
 		}
 	}

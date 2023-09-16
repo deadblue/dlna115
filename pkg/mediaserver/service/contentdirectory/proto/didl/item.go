@@ -21,15 +21,34 @@ const (
 
 type _BaseItem struct {
 	Object
+	Res Res `xml:"res"`
 }
 
 func (o *_BaseItem) isItem() {}
 
+type ImageItem struct {
+	_BaseItem
+}
+
+func (o *ImageItem) Init() *ImageItem {
+	o.Class = ItemClassImage
+	o.Restricted = "1"
+	return o
+}
+
+type AudioItem struct {
+	_BaseItem
+}
+
+func (o *AudioItem) Init() *AudioItem {
+	o.Class = ItemClassAudio
+	o.Restricted = "1"
+	return o
+}
+
 type VideoItem struct {
 	// Derived from _BaseItem
 	_BaseItem
-	// Video item should has Res
-	Res Res `xml:"res"`
 }
 
 func (o *VideoItem) Init() *VideoItem {

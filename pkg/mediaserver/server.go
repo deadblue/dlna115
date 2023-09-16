@@ -39,11 +39,9 @@ func New(opts *Options, ss storage.StorageService) *Server {
 
 	// Create HTTP handler
 	mux := http.NewServeMux()
-	// Mount storage handlers
-	ss.MountTo(mux)
 	// Register service handlers
-	cds.RegisterTo(mux)
-	cms.RegisterTo(mux)
+	cds.MountTo(mux)
+	cms.MountTo(mux)
 
 	// Make server
 	s := &Server{

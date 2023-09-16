@@ -17,15 +17,22 @@ func (s *Service) Browse(parentId string) (items []storage.Item) {
 		return s.browseRoot()
 	}
 	parts := strings.SplitN(parentId, "@", 2)
+
+	var err error
+	var it elevengo.Iterator[elevengo.File]
 	switch parts[0] {
 	case FolderTypeDir:
-		return s.browseDir(parts[1])
+		it, err = s.ea.FileIterate(parts[1])
 	case FolderTypeStar:
-		return s.browseStar()
+		it, err = s.ea.FileWithStar()
 	case FolderTypeLabel:
-		return s.browseLabel(parts[1])
+		it, err = s.ea.FileWithLabel(parts[1])
 	}
-	return emptyItems
+	if err != nil {
+		return emptyItems
+	} else {
+		return s.createItemList(it)
+	}
 }
 
 func (s *Service) browseRoot() (items []storage.Item) {
@@ -39,33 +46,6 @@ func (s *Service) browseRoot() (items []storage.Item) {
 	return
 }
 
-func (s *Service) browseDir(dirId string) []storage.Item {
-	it, err := s.ea.FileIterate(dirId)
-	if err != nil {
-		return emptyItems
-	} else {
-		return s.createItemList(it)
-	}
-}
-
-func (s *Service) browseStar() []storage.Item {
-	it, err := s.ea.FileWithStar()
-	if err != nil {
-		return emptyItems
-	} else {
-		return s.createItemList(it)
-	}
-}
-
-func (s *Service) browseLabel(labelId string) []storage.Item {
-	it, err := s.ea.FileWithLabel(labelId)
-	if err != nil {
-		return emptyItems
-	} else {
-		return s.createItemList(it)
-	}
-}
-
 func (s *Service) createItemList(it elevengo.Iterator[elevengo.File]) []storage.Item {
 	items := make([]storage.Item, 0)
 	var err error
@@ -75,28 +55,31 @@ func (s *Service) createItemList(it elevengo.Iterator[elevengo.File]) []storage.
 			continue
 		}
 		if file.IsDirectory {
-			items = append(items, createDir(file))
+			items = append(items, s.createDir(file))
 		} else if file.IsVideo && file.VideoDefinition > 0 {
-			items = append(items, createVideoFile(file, s.opts.DisableHLS))
+			items = append(items, s.createVideoFile(file))
+		} else if isImageFile(file.Name) {
+			items = append(items, s.createImageFile(file))
 		}
 	}
 	return items
 }
 
-func createDir(file *elevengo.File) (item *storage.Dir) {
+func (s *Service) createDir(file *elevengo.File) (item *storage.Dir) {
 	item = &storage.Dir{}
-	item.Name = file.Name
 	item.ID = fmt.Sprintf("%s@%s", FolderTypeDir, file.FileId)
+	item.Name = file.Name
 	return
 }
 
-func createVideoFile(file *elevengo.File, disableHLS bool) (item *storage.VideoFile) {
+func (s *Service) createVideoFile(file *elevengo.File) (item *storage.VideoFile) {
 	item = &storage.VideoFile{}
 	item.ID = file.FileId
 	item.Name = file.Name
 	item.Size = file.Size
+	item.MimeType = getMimeType(file.Name)
 	item.Duration = file.MediaDuration
-	item.PlayURL = generatePlayUrl(file, disableHLS)
+	item.URLPath = s.generatePath(file)
 	// GUESS resoltion from video definition
 	switch file.VideoDefinition {
 	case elevengo.VideoDefinitionSD:
@@ -114,5 +97,15 @@ func createVideoFile(file *elevengo.File, disableHLS bool) (item *storage.VideoF
 	// Dummy values which we can not get form 115
 	item.AudioChannels = 2
 	item.AudioSampleRate = 44100
+	return
+}
+
+func (s *Service) createImageFile(file *elevengo.File) (item *storage.ImageFile) {
+	item = &storage.ImageFile{}
+	item.ID = file.FileId
+	item.Name = file.Name
+	item.Size = file.Size
+	item.MimeType = getMimeType(file.Name)
+	item.URLPath = s.generatePath(file)
 	return
 }

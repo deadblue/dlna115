@@ -48,7 +48,7 @@ func newAgent() *elevengo.Agent {
 	// Setup dialer
 	dialer := &net.Dialer{
 		Resolver: &net.Resolver{
-			PreferGo: true,
+			PreferGo: false,
 		},
 	}
 	dialer.SetMultipathTCP(true)

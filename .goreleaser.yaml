@@ -10,9 +10,9 @@ builds:
       - -s -w
       - -X github.com/deadblue/dlna115/pkg/version.version={{.Version}}
     tags:
-      - netgo
-    env:
-      - CGO_ENABLED=0
+      - netcgo
+    # env:
+    #   - CGO_ENABLED=0
     targets:
       - darwin_amd64
       - darwin_arm64

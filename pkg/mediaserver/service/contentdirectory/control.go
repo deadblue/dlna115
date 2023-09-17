@@ -93,10 +93,26 @@ func (s *Service) handleActionBrowse(payload []byte, host string) (ret any, err 
 			obj.Res.Resolution = item.VideoResolution
 			// Make full URL
 			obj.Res.URL = fmt.Sprintf("http://%s%s%s", host, _ViewUrl, item.URLPath)
-			// Calculate bitrate
-			obj.Res.Bitrate = int(float64(item.Size) / item.Duration)
 			// Format Duration
 			obj.Res.Duration = didl.FormatDuration(item.Duration)
+			// Calculate bitrate
+			obj.Res.Bitrate = int(float64(item.Size) / item.Duration)
+			// Append to item list
+			result.AppendItem(obj)
+			resp.TotalMatches += 1
+		case *storage.AudioFile:
+			obj := (&didl.AudioItem{}).Init()
+			obj.ParentID = req.ObjectID
+			obj.ID = item.ID
+			obj.Title = item.Name
+			obj.Res.ProtocolInfo = fmt.Sprintf("http-get:*:%s:*", item.MimeType)
+			obj.Res.Size = item.Size
+			obj.Res.NrAudioChannels = item.AudioChannels
+			obj.Res.SampleFrequency = item.AudioSampleRate
+			obj.Res.URL = fmt.Sprintf("http://%s%s%s", host, _ViewUrl, item.URLPath)
+			obj.Res.Duration = didl.FormatDuration(item.Duration)
+			obj.Res.Bitrate = int(float64(item.Size) / item.Duration)
+			// Append to item list
 			result.AppendItem(obj)
 			resp.TotalMatches += 1
 		case *storage.ImageFile:
@@ -107,6 +123,7 @@ func (s *Service) handleActionBrowse(payload []byte, host string) (ret any, err 
 			obj.Res.ProtocolInfo = fmt.Sprintf("http-get:*:%s:*", item.MimeType)
 			obj.Res.Size = item.Size
 			obj.Res.URL = fmt.Sprintf("http://%s%s%s", host, _ViewUrl, item.URLPath)
+			// Append to item list
 			result.AppendItem(obj)
 			resp.TotalMatches += 1
 		}

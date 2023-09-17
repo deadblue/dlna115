@@ -58,6 +58,8 @@ func (s *Service) createItemList(it elevengo.Iterator[elevengo.File]) []storage.
 			items = append(items, s.createDir(file))
 		} else if file.IsVideo && file.VideoDefinition > 0 {
 			items = append(items, s.createVideoFile(file))
+		} else if !file.IsVideo && file.MediaDuration > 0 {
+			items = append(items, s.createAudioFile(file))
 		} else if isImageFile(file.Name) {
 			items = append(items, s.createImageFile(file))
 		}
@@ -78,8 +80,8 @@ func (s *Service) createVideoFile(file *elevengo.File) (item *storage.VideoFile)
 	item.Name = file.Name
 	item.Size = file.Size
 	item.MimeType = getMimeType(file.Name)
-	item.Duration = file.MediaDuration
 	item.URLPath = s.generatePath(file)
+	item.Duration = file.MediaDuration
 	// GUESS resoltion from video definition
 	switch file.VideoDefinition {
 	case elevengo.VideoDefinitionSD:
@@ -94,6 +96,20 @@ func (s *Service) createVideoFile(file *elevengo.File) (item *storage.VideoFile)
 		// Fallback
 		item.VideoResolution = "640x480"
 	}
+	// Dummy values which we can not get form 115
+	item.AudioChannels = 2
+	item.AudioSampleRate = 44100
+	return
+}
+
+func (s *Service) createAudioFile(file *elevengo.File) (item *storage.AudioFile) {
+	item = &storage.AudioFile{}
+	item.ID = file.FileId
+	item.Name = file.Name
+	item.Size = file.Size
+	item.MimeType = getMimeType(file.Name)
+	item.URLPath = s.generatePath(file)
+	item.Duration = file.MediaDuration
 	// Dummy values which we can not get form 115
 	item.AudioChannels = 2
 	item.AudioSampleRate = 44100

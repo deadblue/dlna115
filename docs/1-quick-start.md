@@ -25,7 +25,7 @@ dlna115 login <credential.txt>
 
 ### 配置服务
 
-编辑 `config-quickstart.yaml` ，将第一步导入的凭证文件的路径填写到`source`字段中。
+编辑 `config-quickstart.yaml` ，将第一步导出的凭证文件的路径填写到`source`字段中。
 
 > 路径可使用完整路径或相对主程序的路径。
 
@@ -46,7 +46,7 @@ dlna115 daemon -c config-quickstart.yaml
 
 ## 访问服务
 
-在处于同一局域网的终端上，如手机、平板或TV上，启动支持 UPnP 和 HLS 的播放器，即可在本地网络中扫描到名叫 115 的服务。
+在处于同一局域网的终端上，如手机、平板或TV上，启动支持 UPnP 的播放器，即可在本地网络中扫描到名叫 115 的服务。
 
 进入该服务即可浏览和播放 115 网盘上的视频。
 

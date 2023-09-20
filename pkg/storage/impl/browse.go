@@ -2,6 +2,7 @@ package impl
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/deadblue/dlna115/pkg/storage"
@@ -29,6 +30,7 @@ func (s *Service) Browse(parentId string) (items []storage.Item) {
 		it, err = s.ea.FileWithLabel(parts[1])
 	}
 	if err != nil {
+		log.Printf("Get file list failed: %s", err)
 		return emptyItems
 	} else {
 		return s.createItemList(it)

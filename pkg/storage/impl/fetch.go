@@ -5,19 +5,17 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"mime"
 	"path/filepath"
 	"regexp"
 
 	"github.com/deadblue/dlna115/pkg/storage"
+	"github.com/deadblue/dlna115/pkg/util"
 	"github.com/deadblue/elevengo"
 )
 
 const (
 	_FetchTypeFile = "file"
 	_FetchTypeHls  = "hls"
-
-	_MimeTypeHls = "application/x-mpegURL"
 )
 
 var (
@@ -97,7 +95,7 @@ func (s *Service) fetchFileContent(fr *FetchRequest, content *storage.Content) (
 	}
 
 	// Fetch
-	content.MimeType = mime.TypeByExtension("." + fr.OriginalExt)
+	content.MimeType = util.GetMimeTypeForExt(fr.OriginalExt)
 	content.FileSize = ticket.FileSize
 	if fr.Offset == 0 && fr.Length < 0 {
 		content.BodySize = content.FileSize
@@ -138,7 +136,7 @@ func (s *Service) fetchHlsContent(fr *FetchRequest, content *storage.Content) (e
 	}
 
 	// Make HLS content
-	content.MimeType = _MimeTypeHls
+	content.MimeType = util.MimeTypeM3U8
 	content.FileSize = int64(len(hlsData))
 	content.BodySize = content.FileSize
 	content.Body = io.NopCloser(bytes.NewReader(hlsData))

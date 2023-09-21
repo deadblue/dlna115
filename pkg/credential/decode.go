@@ -14,12 +14,17 @@ func decrypt(src []byte, secret string) []byte {
 	block, _ := aes.NewCipher(deriveKey(secret))
 	blockSize := block.BlockSize()
 
-	plaintext := make([]byte, len(src)-blockSize)
+	// Prepare plaintext buffer
+	plainSize := len(src) - blockSize
+	plaintext := make([]byte, plainSize)
 
+	// Decrypt
 	dec := cipher.NewCBCDecrypter(block, src[:blockSize])
 	dec.CryptBlocks(plaintext, src[blockSize:])
 
-	return plaintext
+	// Unpadding
+	padSize := int(plaintext[plainSize-1])
+	return plaintext[:plainSize-padSize]
 }
 
 func Decode(src []byte, secret string, cred *elevengo.Credential) (err error) {

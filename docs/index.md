@@ -1,19 +1,14 @@
-# 简介
+# 首页
 
 一个极简的 DLNA MediaServer 实现，配合支持 DLNA 的播放器可浏览和播放 115 网盘上的视频。
 
-# 原理
+![](images/screenshot_1-4.jpg)
 
-DLNA115 是一个 DLNA 协议 与 115 API 的转换和转发服务器。
-
-它将来自播放器的 DLNA 浏览请求转换为对 115 的 API 调用，并将取到的文件列表转换为 DLNA 浏览响应，实现对网盘文件的浏览。
-
-当播放器要播放一个网盘上的文件时，DLNA115 通过 115 的 API 获取到对应文件的 HLS 播放地址，并将其返回给播放器端，实现网盘视频的播放。
-
-整个过程中不需要把任何文件下载到本地，因此没有对存储空间的要求。可将 DLNA115 服务运行在配置较低的嵌入式设备上，如树莓派，NAS 等。
+![](images/screenshot_5.jpg)
 
 ## 目录
 
 * [快速启动](1-quick-start.md)
 * [命令行](2-command-line.md)
 * [配置文件](3-configuration.md)
+* [实现原理](4-mechanism.md)

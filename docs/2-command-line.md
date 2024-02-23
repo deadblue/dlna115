@@ -11,7 +11,9 @@ dlna115 <command> <command-arguments>
 * `login`
 * `daemon`
 
-## login | 登录
+## 命令说明
+
+### login | 登录
 
 登录命令用来模拟桌面客户端的扫码登录，并将用户的凭证信息导出到文件中。
 
@@ -41,11 +43,11 @@ dlna115 login [-p <platform>] [-s <secret>] [credential-file]
 
 **`credential-file`**
 
-保存凭证的文件路径。
+保存凭证的文件路径。未传入此参数时，凭证内容会打印在终端中。
 
 ---
 
-## daemon | 启动服务
+### daemon | 启动服务
 
 启动 DLNA MediaServer 与 SSDP 服务。
 
@@ -61,17 +63,17 @@ dlna115 daemon -c <config-file.yaml>
 
 ---
 
-### 注册为系统服务
+## 注册为系统服务
 
 === "Linux"
 
     ```ini
     [Unit]
     Description=115 DLNA Service
-    After=network.target nss-lookup.target
+    After=network-online.target
 
     [Service]
-    User=nobody
+    DynamicUser=yes
     ExecStart=/usr/local/bin/dlna115 daemon -c /usr/local/etc/dlna115/config.yaml
     Restart=on-failure
 

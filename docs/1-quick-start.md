@@ -4,7 +4,7 @@
 
 下载对应系统的安装包，解压到任意目录：
 
-[https://github.com/deadblue/dlna115/releases](https://github.com/deadblue/dlna115/releases)
+[https://github.com/deadblue/dlna115/releases/latest](https://github.com/deadblue/dlna115/releases/latest)
 
 ## 配置与运行
 

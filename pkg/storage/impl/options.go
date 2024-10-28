@@ -100,13 +100,9 @@ func (s *Service) initTopFolders() (err error) {
 	if err != nil {
 		return
 	}
-	for ; err == nil; err = it.Next() {
-		label := &elevengo.Label{}
-		if it.Get(label) == nil {
-			labelMap[label.Name] = label.Id
-		}
+	for _, label := range it.Items() {
+		labelMap[label.Name] = label.Id
 	}
-	err = nil
 
 	if s.opts.TopFolders != nil {
 		for _, tfo := range s.opts.TopFolders {

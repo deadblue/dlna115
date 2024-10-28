@@ -51,12 +51,7 @@ func (s *Service) browseRoot() (items []storage.Item) {
 
 func (s *Service) createItemList(it elevengo.Iterator[elevengo.File]) []storage.Item {
 	items := make([]storage.Item, 0)
-	var err error
-	for ; err == nil; err = it.Next() {
-		file := &elevengo.File{}
-		if it.Get(file) != nil {
-			continue
-		}
+	for _, file := range it.Items() {
 		if file.IsDirectory {
 			items = append(items, s.createDir(file))
 		} else if file.IsVideo && file.VideoDefinition > 0 {

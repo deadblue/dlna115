@@ -58,10 +58,8 @@ func newAgent() *elevengo.Agent {
 	transport.MaxIdleConnsPerHost = 10
 	// Custom http client of elevengo.Agent
 	return elevengo.New(
-		&option.AgentHttpOption{
-			Client: &http.Client{
-				Transport: transport,
-			},
-		},
+		option.Agent().WithHttpClient(&http.Client{
+			Transport: transport,
+		}),
 	)
 }

@@ -50,10 +50,10 @@ Description:
 Arguments:
     -s, -secret <secret-key>
         Secret key to encrypt credential, keep it secret!
-	-p, -platform <login-platform>
-	    Simulate login on specific platform.
-		Supported: web/android/ios/tv/wechat/alipay/qandroid
-		Default: web
+    -p, -platform <login-platform>
+        Simulate login on specific platform.
+        Supported: web/android/ios/tv/wechat/alipay/qandroid
+        Default: web
     save-file
         File to save credential.
 

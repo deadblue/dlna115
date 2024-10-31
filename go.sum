@@ -1,11 +1,13 @@
 filippo.io/nistec v0.0.3 h1:h336Je2jRDZdBCLy2fLDUd9E2unG32JLwcJi0JQE9Cw=
 filippo.io/nistec v0.0.3/go.mod h1:84fxC9mi+MhC2AERXI4LSa8cmSVOzrFikg6hZ4IfCyw=
-github.com/deadblue/elevengo v0.7.3 h1:wYItCEhQmskmuZ+wMOkPaYmZ5m/D/LkPNCkuK8sRBTE=
-github.com/deadblue/elevengo v0.7.3/go.mod h1:rTKHkJuPwdRjRbDpfeARXxfvDHbPf7PLUvIfeTqQ9vE=
+github.com/deadblue/elevengo v0.7.4 h1:oVjnBLrmKQGdvoNeTw1oNhD3NBlT01v41dC6Ls460kM=
+github.com/deadblue/elevengo v0.7.4/go.mod h1:rTKHkJuPwdRjRbDpfeARXxfvDHbPf7PLUvIfeTqQ9vE=
 github.com/deadblue/qrascii v0.0.1 h1:N1JEM3Pz5Rti2WdjDIWMyFoR6LUld2+aO2xGT2/Vpdg=
 github.com/deadblue/qrascii v0.0.1/go.mod h1:wmV7In0C2lHsIjpfx3FNpCAL0P3VJNZRFxSURd++LwA=
 github.com/google/uuid v1.3.1 h1:KjJaJ9iWZ3jOFZIf1Lqf4laDRCasjl0BCmnEGxkdLb4=
 github.com/google/uuid v1.3.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/grafov/m3u8 v0.12.0 h1:T6iTwTsSEtMcwkayef+FJO8kj+Sglr4Lh81Zj8Ked/4=
+github.com/grafov/m3u8 v0.12.0/go.mod h1:nqzOkfBiZJENr52zTVd/Dcl03yzphIMbJqkXGu+u080=
 golang.org/x/net v0.30.0 h1:AcW1SDZMkb8IpzCdQUaIq2sP4sZ4zw+55h6ynffypl4=
 golang.org/x/net v0.30.0/go.mod h1:2wGyMJ5iFasEhkwi13ChkO/t1ECNC4X4eBKkVFyYFlU=
 golang.org/x/sys v0.26.0 h1:KHjCJyddX0LoSTb3J+vWpupP9p0oznkqVk/IfjymZbo=

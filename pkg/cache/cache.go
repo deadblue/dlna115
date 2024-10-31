@@ -1,4 +1,4 @@
-package util
+package cache
 
 import (
 	"sync"
@@ -11,18 +11,17 @@ type entry[V any] struct {
 }
 
 type TTLCache[V any] struct {
-	ttl   time.Duration
 	mutex sync.RWMutex
 	cache map[string]entry[V]
 }
 
-func (c *TTLCache[V]) Put(key string, value V) {
+func (c *TTLCache[V]) Put(key string, value V, expiration time.Duration) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
 	now := time.Now()
 	c.cache[key] = entry[V]{
-		expiry: now.Add(c.ttl).Unix(),
+		expiry: now.Add(expiration).Unix(),
 		value:  value,
 	}
 }
@@ -48,9 +47,8 @@ func (c *TTLCache[V]) Remove(key string) {
 	delete(c.cache, key)
 }
 
-func NewCache[V any](ttl time.Duration) *TTLCache[V] {
+func New[V any]() *TTLCache[V] {
 	return &TTLCache[V]{
-		ttl:   ttl,
 		cache: make(map[string]entry[V]),
 	}
 }

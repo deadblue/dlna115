@@ -19,13 +19,14 @@ func (s *Service) HandleView(rw http.ResponseWriter, req *http.Request) {
 	}
 	defer content.Body.Close()
 
-	rw.Header().Set("Accept-Ranges", "bytes")
-	rw.Header().Set("Content-Type", content.MimeType)
-	rw.Header().Set("Content-Length", strconv.FormatInt(content.BodySize, 10))
-	if offset != 0 || length != -1 {
-		rw.Header().Set("Content-Range", fmt.Sprintf(
-			"bytes %d-%d/%d",
-			offset, offset+content.BodySize-1, content.FileSize,
+	headers := rw.Header()
+	headers.Set("Content-Type", content.MimeType)
+	headers.Set("Content-Length", strconv.FormatInt(content.BodySize, 10))
+	// Range support is determined by storage
+	if cr := content.Range; cr != nil {
+		headers.Set("Accept-Ranges", "bytes")
+		headers.Set("Content-Range", fmt.Sprintf(
+			"bytes %d-%d/%d", cr.Start, cr.End, cr.Total,
 		))
 		rw.WriteHeader(http.StatusPartialContent)
 	} else {

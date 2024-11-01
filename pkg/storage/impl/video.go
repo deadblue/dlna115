@@ -1,7 +1,6 @@
 package impl
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"strconv"
@@ -68,10 +67,9 @@ func (s *Service) videoCreateManifest(pickcode string, content *storage.Content)
 	}
 	sb.WriteString("#EXT-X-ENDLIST\n")
 	// Fill storage.Content
-	manifestData := ([]byte)(sb.String())
-	content.Body = io.NopCloser(bytes.NewReader(manifestData))
-	content.BodySize = int64(len(manifestData))
-	content.FileSize = content.BodySize
+	body := strings.NewReader(sb.String())
+	content.Body = io.NopCloser(body)
+	content.BodySize = body.Size()
 	content.MimeType = util.MimeTypeM3U8
 	return
 }
@@ -146,7 +144,6 @@ func (s *Service) videoFetchSegment(pickcode string, index int, content *storage
 	if err == nil {
 		content.Body = body
 		content.BodySize = body.Size()
-		content.FileSize = body.TotalSize()
 		content.MimeType = util.MimeTypeM2TS
 	}
 	return

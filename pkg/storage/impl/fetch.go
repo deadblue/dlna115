@@ -1,12 +1,9 @@
 package impl
 
 import (
-	"fmt"
 	"log"
-	"path/filepath"
 
 	"github.com/deadblue/dlna115/pkg/storage"
-	"github.com/deadblue/elevengo"
 )
 
 func (s *Service) Fetch(
@@ -34,16 +31,4 @@ func (s *Service) Fetch(
 		log.Printf("Fetch content [%s] failed: %s", fr.FilePath, err)
 	}
 	return
-}
-
-func (s *Service) generatePath(file *elevengo.File) string {
-	fetchType := _FetchTypeFile
-	if file.IsVideo && !s.opts.DisableHLS {
-		fetchType = _FetchTypeHls
-	}
-	fileExt := (filepath.Ext(file.Name))[1:]
-	return fmt.Sprintf(
-		"%s-%s/%s.%s",
-		fetchType, fileExt, file.PickCode, fileExt,
-	)
 }

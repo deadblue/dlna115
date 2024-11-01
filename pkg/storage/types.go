@@ -78,13 +78,22 @@ func (i *VideoFile) Type() ItemType {
 	return ItemTypeVideo
 }
 
+type ContentRange struct {
+	// Range start
+	Start int64
+	// Range end
+	End int64
+	// Total size
+	Total int64
+}
+
 type Content struct {
 	// Content body
 	Body io.ReadCloser
 	// Body size
 	BodySize int64
-	// File size
-	FileSize int64
 	// MIME type
 	MimeType string
+	// Content range
+	Range *ContentRange
 }

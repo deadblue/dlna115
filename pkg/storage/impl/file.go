@@ -22,32 +22,41 @@ func (s *Service) fileFetchContent(fr *FetchRequest, content *storage.Content) (
 	if fr.OriginalExt != fr.RequestExt {
 		return errInvalidExt
 	}
-	// Get download ticket
+	// Get download ticket from cache or upstream
 	pickcode := fr.FilePath
 	ticket, ok := s.dtc.Get(pickcode)
 	if !ok {
 		ticket = &elevengo.DownloadTicket{}
-		if err = s.ea.DownloadCreateTicket(pickcode, ticket); err == nil {
-			s.dtc.Put(pickcode, ticket, getFileUrlExpiration(ticket.Url))
-		} else {
+		if err = s.ea.DownloadCreateTicket(pickcode, ticket); err != nil {
 			return
 		}
+		s.dtc.Put(pickcode, ticket, getFileUrlExpiration(ticket.Url))
 	}
 
-	// Fetch
-	content.MimeType = util.GetMimeTypeForExt(fr.OriginalExt)
-	content.FileSize = ticket.FileSize
+	// Fetch stream from storage
 	if fr.Offset == 0 && fr.Length < 0 {
-		content.BodySize = content.FileSize
-		content.Body, err = s.ea.Fetch(ticket.Url)
+		if content.Body, err = s.ea.Fetch(ticket.Url); err != nil {
+			return
+		}
+		content.BodySize = ticket.FileSize
 	} else {
-		content.Body, err = s.ea.FetchRange(
+		maxLength := ticket.FileSize - fr.Offset
+		if fr.Length < 0 || fr.Length > maxLength {
+			fr.Length = maxLength
+		}
+		if content.Body, err = s.ea.FetchRange(
 			ticket.Url, elevengo.RangeMiddle(fr.Offset, fr.Length),
-		)
-		content.BodySize = content.FileSize - fr.Offset
-		if fr.Length > 0 && fr.Length < content.BodySize {
-			content.BodySize = fr.Length
+		); err != nil {
+			return
+		}
+		// Fill range information
+		content.BodySize = fr.Length
+		content.Range = &storage.ContentRange{
+			Start: fr.Offset,
+			End:   fr.Offset + fr.Length - 1,
+			Total: ticket.FileSize,
 		}
 	}
+	content.MimeType = util.GetMimeTypeForExt(fr.OriginalExt)
 	return
 }

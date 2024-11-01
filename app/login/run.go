@@ -16,7 +16,7 @@ import (
 func (c *Command) Run() (err error) {
 	agent := elevengo.Default()
 	session := &elevengo.QrcodeSession{}
-	if err = agent.QrcodeStart(session, c.platform); err != nil {
+	if err = agent.QrcodeStart(session); err != nil {
 		log.Fatalf("Start login session failed: %s", err)
 	}
 
@@ -35,7 +35,7 @@ func (c *Command) Run() (err error) {
 		// QRCode expired or canceled
 		if err != nil {
 			// Request new QRCode
-			err = agent.QrcodeStart(session, c.platform)
+			err = agent.QrcodeStart(session)
 			if err == nil {
 				// Replace old QRCode
 				lineCount := strings.Count(qrAscii, "\n") + 1

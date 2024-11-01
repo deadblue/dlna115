@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/deadblue/dlna115/pkg/credential"
 	"github.com/deadblue/dlna115/pkg/util"
@@ -87,8 +88,14 @@ func (s *Service) loadCredential() (err error) {
 	}
 	// Decode credential
 	cred := &elevengo.Credential{}
-	if err = credential.Decode(credData, src.Secret, cred); err == nil {
-		err = s.ea.CredentialImport(cred)
+	if err = credential.Decode(credData, src.Secret, cred); err != nil {
+		return
+	}
+	if err = s.ea.CredentialImport(cred); err == nil {
+		// Force disable HLS when credential is not for web client
+		if !s.opts.DisableHLS && !isWebCredential(cred) {
+			s.opts.DisableHLS = true
+		}
 	}
 	return
 }
@@ -100,13 +107,9 @@ func (s *Service) initTopFolders() (err error) {
 	if err != nil {
 		return
 	}
-	for ; err == nil; err = it.Next() {
-		label := &elevengo.Label{}
-		if it.Get(label) == nil {
-			labelMap[label.Name] = label.Id
-		}
+	for _, label := range it.Items() {
+		labelMap[label.Name] = label.Id
 	}
-	err = nil
 
 	if s.opts.TopFolders != nil {
 		for _, tfo := range s.opts.TopFolders {
@@ -155,4 +158,9 @@ func (s *Service) initTopFolders() (err error) {
 		}
 	}
 	return
+}
+
+func isWebCredential(cred *elevengo.Credential) bool {
+	parts := strings.Split(cred.UID, "_")
+	return len(parts) == 3 && parts[1][0] == 'A'
 }

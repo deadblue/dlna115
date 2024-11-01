@@ -3,9 +3,8 @@ package impl
 import (
 	"net"
 	"net/http"
-	"time"
 
-	"github.com/deadblue/dlna115/pkg/util"
+	"github.com/deadblue/dlna115/pkg/cache"
 	"github.com/deadblue/elevengo"
 	"github.com/deadblue/elevengo/option"
 )
@@ -27,10 +26,10 @@ type Service struct {
 	// Top folders
 	tfs []*Folder
 
-	// Video ticket cache
-	vtc *util.TTLCache[*elevengo.VideoTicket]
+	// Video metadata cache
+	vmc *cache.TTLCache[*VideoMetadata]
 	// Download ticket cache
-	dtc *util.TTLCache[*elevengo.DownloadTicket]
+	dtc *cache.TTLCache[*elevengo.DownloadTicket]
 }
 
 func New(opts *Options) (s *Service) {
@@ -38,8 +37,8 @@ func New(opts *Options) (s *Service) {
 		opts: opts,
 		ea:   newAgent(),
 
-		vtc: util.NewCache[*elevengo.VideoTicket](time.Minute * 30),
-		dtc: util.NewCache[*elevengo.DownloadTicket](time.Minute * 30),
+		vmc: cache.New[*VideoMetadata](),
+		dtc: cache.New[*elevengo.DownloadTicket](),
 	}
 	return
 }
@@ -58,10 +57,8 @@ func newAgent() *elevengo.Agent {
 	transport.MaxIdleConnsPerHost = 10
 	// Custom http client of elevengo.Agent
 	return elevengo.New(
-		&option.AgentHttpOption{
-			Client: &http.Client{
-				Transport: transport,
-			},
-		},
+		option.Agent().WithHttpClient(&http.Client{
+			Transport: transport,
+		}),
 	)
 }

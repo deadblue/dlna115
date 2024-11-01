@@ -10,22 +10,27 @@ import (
 
 func (s *Service) HandleView(rw http.ResponseWriter, req *http.Request) {
 	filePath := req.URL.Path[_ViewUrlLen:]
-	offset, length := parseRequestRange(req.Header.Get("Range"))
-
+	// Check range header
+	isRange, offset, length := false, int64(0), int64(-1)
+	if rh := req.Header.Get("Range"); rh != "" {
+		isRange = true
+		offset, length = parseRequestRange(rh)
+	}
+	// Fetch content
 	content, err := s.ss.Fetch(filePath, offset, length)
 	if err != nil {
 		http.NotFound(rw, req)
 		return
 	}
 	defer content.Body.Close()
-
-	rw.Header().Set("Accept-Ranges", "bytes")
-	rw.Header().Set("Content-Type", content.MimeType)
-	rw.Header().Set("Content-Length", strconv.FormatInt(content.BodySize, 10))
-	if offset != 0 || length != -1 {
-		rw.Header().Set("Content-Range", fmt.Sprintf(
-			"bytes %d-%d/%d",
-			offset, offset+content.BodySize-1, content.FileSize,
+	// Send response
+	headers := rw.Header()
+	headers.Set("Content-Type", content.MimeType)
+	headers.Set("Content-Length", strconv.FormatInt(content.BodySize, 10))
+	if cr := content.Range; isRange && cr != nil {
+		headers.Set("Accept-Ranges", "bytes")
+		headers.Set("Content-Range", fmt.Sprintf(
+			"bytes %d-%d/%d", cr.Start, cr.End, cr.Total,
 		))
 		rw.WriteHeader(http.StatusPartialContent)
 	} else {

@@ -3,6 +3,7 @@ package impl
 import (
 	"fmt"
 	"log"
+	"path/filepath"
 	"strings"
 
 	"github.com/deadblue/dlna115/pkg/storage"
@@ -51,12 +52,7 @@ func (s *Service) browseRoot() (items []storage.Item) {
 
 func (s *Service) createItemList(it elevengo.Iterator[elevengo.File]) []storage.Item {
 	items := make([]storage.Item, 0)
-	var err error
-	for ; err == nil; err = it.Next() {
-		file := &elevengo.File{}
-		if it.Get(file) != nil {
-			continue
-		}
+	for _, file := range it.Items() {
 		if file.IsDirectory {
 			items = append(items, s.createDir(file))
 		} else if file.IsVideo && file.VideoDefinition > 0 {
@@ -83,7 +79,7 @@ func (s *Service) createVideoFile(file *elevengo.File) (item *storage.VideoFile)
 	item.Name = file.Name
 	item.Size = file.Size
 	item.MimeType = util.GetMimeType(file.Name)
-	item.URLPath = s.generatePath(file)
+	item.URLPath = s.generateFilePath(file)
 	item.Duration = file.MediaDuration
 	// GUESS resoltion from video definition
 	switch file.VideoDefinition {
@@ -111,7 +107,7 @@ func (s *Service) createAudioFile(file *elevengo.File) (item *storage.AudioFile)
 	item.Name = file.Name
 	item.Size = file.Size
 	item.MimeType = util.GetMimeType(file.Name)
-	item.URLPath = s.generatePath(file)
+	item.URLPath = s.generateFilePath(file)
 	item.Duration = file.MediaDuration
 	// Dummy values which we can not get form 115
 	item.AudioChannels = 2
@@ -125,6 +121,18 @@ func (s *Service) createImageFile(file *elevengo.File) (item *storage.ImageFile)
 	item.Name = file.Name
 	item.Size = file.Size
 	item.MimeType = util.GetMimeType(file.Name)
-	item.URLPath = s.generatePath(file)
+	item.URLPath = s.generateFilePath(file)
 	return
+}
+
+func (s *Service) generateFilePath(file *elevengo.File) string {
+	fetchType := _FetchTypeFile
+	if file.IsVideo && !s.opts.DisableHLS {
+		fetchType = _FetchTypeHls
+	}
+	fileExt := (filepath.Ext(file.Name))[1:]
+	return fmt.Sprintf(
+		"%s-%s/%s.%s",
+		fetchType, fileExt, file.PickCode, fileExt,
+	)
 }

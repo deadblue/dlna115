@@ -7,31 +7,33 @@ import (
 	"github.com/deadblue/elevengo/option"
 )
 
-const (
-	defaultPlatform = "linux"
-)
-
 func (c *Command) Init(args []string) (err error) {
 	// Parse args
 	fs := flag.NewFlagSet("", flag.ContinueOnError)
 	fs.Usage = func() {}
-	var platform string
-	fs.StringVar(&platform, "platform", defaultPlatform, "")
-	fs.StringVar(&platform, "p", defaultPlatform, "")
 	fs.StringVar(&c.secret, "secret", "", "")
 	fs.StringVar(&c.secret, "s", "", "")
+	var platform string
+	fs.StringVar(&platform, "platform", "", "")
+	fs.StringVar(&platform, "p", "", "")
 	if err = fs.Parse(args); err != nil {
 		return
 	}
-
 	// Save args
+	c.opts = option.Qrcode()
 	switch platform {
-	case "mac":
-		c.platform = option.QrcodeLoginMac
-	case "windows":
-		c.platform = option.QrcodeLoginWindows
-	default:
-		c.platform = option.QrcodeLoginLinux
+	case "android":
+		c.opts.LoginAndroid()
+	case "ios":
+		c.opts.LoginIos()
+	case "tv":
+		c.opts.LoginTv()
+	case "wechat":
+		c.opts.LoginWechatMiniApp()
+	case "alipay":
+		c.opts.LoginAlipayMiniApp()
+	case "qandroid":
+		c.opts.LoginQandroid()
 	}
 	if fs.NArg() > 0 {
 		c.saveFile = fs.Arg(0)
@@ -40,22 +42,23 @@ func (c *Command) Init(args []string) (err error) {
 }
 
 const usageTemplate = `
-Usage: %s [-p paltform] [-s secret-key] [save-file]
+Usage: %s [-s secret-key] [-p platform] [save-file]
 
 Description:
     %s
 
 Arguments:
-    -p, -platform <platform>
-        Simulte login on given platform.
-        Supported platform: linux/mac/windows, default is linux.
     -s, -secret <secret-key>
         Secret key to encrypt credential, keep it secret!
+    -p, -platform <login-platform>
+        Simulate login on specific platform.
+        Supported: web/android/ios/tv/wechat/alipay/qandroid
+        Default: web
     save-file
         File to save credential.
 
 Example: 
-    %s -p linux -s sesame credential.txt
+    %s -s sesame credential.txt
 
 `
 

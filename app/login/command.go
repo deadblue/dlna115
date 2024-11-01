@@ -10,8 +10,8 @@ const (
 )
 
 type Command struct {
-	// Platform to login
-	platform option.QrcodeLoginOption
+	// Login options
+	opts *option.QrcodeOptions
 	// Secret to encrypt cookie
 	secret string
 	// File to save cookie

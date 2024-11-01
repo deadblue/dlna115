@@ -1,3 +1,5 @@
+version: 2
+
 project_name: dlna115
 
 before:
@@ -6,6 +8,7 @@ before:
 
 builds:
   - main: ./cmd/main
+    binary: dlna115
     ldflags:
       - -s -w
       - -X github.com/deadblue/dlna115/pkg/version.version={{.Version}}
@@ -37,11 +40,11 @@ checksum:
   name_template: "checksums.txt"
 
 snapshot:
-  name_template: "{{ incpatch .Version }}-next"
+  version_template: "{{ incpatch .Version }}-next"
 
 release:
   prerelease: auto
   mode: keep-existing
 
 changelog:
-  skip: true
+  disable: true

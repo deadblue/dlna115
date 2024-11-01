@@ -6,8 +6,9 @@ import (
 
 const (
 	MimeTypeM3U8 = "application/vnd.apple.mpegurl"
+	MimeTypeM2TS = "video/mp2t"
 
-	_DefaultMimeType = "application/octet-stream"
+	MimeTypeDefault = "application/octet-stream"
 )
 
 var (
@@ -70,7 +71,7 @@ func GetMimeTypeForExt(ext string) string {
 	if mt, ok := _MimeTypes[ext]; ok {
 		return mt
 	} else {
-		return _DefaultMimeType
+		return MimeTypeDefault
 	}
 }
 
@@ -79,7 +80,7 @@ func GetMimeType(filename string) string {
 	if dotIndex >= 0 {
 		return GetMimeTypeForExt(filename[dotIndex+1:])
 	} else {
-		return _DefaultMimeType
+		return MimeTypeDefault
 	}
 }
 

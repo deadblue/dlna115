@@ -10,20 +10,24 @@ import (
 
 func (s *Service) HandleView(rw http.ResponseWriter, req *http.Request) {
 	filePath := req.URL.Path[_ViewUrlLen:]
-	offset, length := parseRequestRange(req.Header.Get("Range"))
-
+	// Check range header
+	isRange, offset, length := false, int64(0), int64(-1)
+	if rh := req.Header.Get("Range"); rh != "" {
+		isRange = true
+		offset, length = parseRequestRange(rh)
+	}
+	// Fetch content
 	content, err := s.ss.Fetch(filePath, offset, length)
 	if err != nil {
 		http.NotFound(rw, req)
 		return
 	}
 	defer content.Body.Close()
-
+	// Send response
 	headers := rw.Header()
 	headers.Set("Content-Type", content.MimeType)
 	headers.Set("Content-Length", strconv.FormatInt(content.BodySize, 10))
-	// Range support is determined by storage
-	if cr := content.Range; cr != nil {
+	if cr := content.Range; isRange && cr != nil {
 		headers.Set("Accept-Ranges", "bytes")
 		headers.Set("Content-Range", fmt.Sprintf(
 			"bytes %d-%d/%d", cr.Start, cr.End, cr.Total,

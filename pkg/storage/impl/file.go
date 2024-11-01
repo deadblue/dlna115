@@ -35,28 +35,28 @@ func (s *Service) fileFetchContent(fr *FetchRequest, content *storage.Content) (
 
 	// Fetch stream from storage
 	if fr.Offset == 0 && fr.Length < 0 {
-		if content.Body, err = s.ea.Fetch(ticket.Url); err != nil {
-			return
-		}
-		content.BodySize = ticket.FileSize
+		content.Body, err = s.ea.Fetch(ticket.Url)
 	} else {
-		maxLength := ticket.FileSize - fr.Offset
-		if fr.Length < 0 || fr.Length > maxLength {
-			fr.Length = maxLength
-		}
-		if content.Body, err = s.ea.FetchRange(
+		content.Body, err = s.ea.FetchRange(
 			ticket.Url, elevengo.RangeMiddle(fr.Offset, fr.Length),
-		); err != nil {
-			return
-		}
-		// Fill range information
+		)
+	}
+	if err != nil {
+		return
+	}
+	// Fill content metadata
+	maxLength := ticket.FileSize - fr.Offset
+	if fr.Length < 0 || fr.Length > maxLength {
+		content.BodySize = maxLength
+	} else {
 		content.BodySize = fr.Length
-		content.Range = &storage.ContentRange{
-			Start: fr.Offset,
-			End:   fr.Offset + fr.Length - 1,
-			Total: ticket.FileSize,
-		}
 	}
 	content.MimeType = util.GetMimeTypeForExt(fr.OriginalExt)
+	// Always fill range metadata
+	content.Range = &storage.ContentRange{
+		Start: fr.Offset,
+		End:   fr.Offset + content.BodySize - 1,
+		Total: ticket.FileSize,
+	}
 	return
 }

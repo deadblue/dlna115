@@ -142,6 +142,7 @@ func (s *Service) videoFetchSegment(pickcode string, index int, content *storage
 	vs := vm.Segments[index]
 	body, err := s.ea.Fetch(vs.Url)
 	if err == nil {
+		// TODO: Support range?
 		content.Body = body
 		content.BodySize = body.Size()
 		content.MimeType = util.MimeTypeM2TS

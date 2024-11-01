@@ -52,8 +52,8 @@ func (s *Service) videoCreateManifest(pickcode string, content *storage.Content)
 		if err = s.videoFetchMetadata(pickcode, vm); err != nil {
 			return
 		}
-		// Cache for one hour
-		s.vmc.Put(pickcode, vm, time.Hour)
+		// Cache for 6 hours
+		s.vmc.Put(pickcode, vm, 6*time.Hour)
 	}
 	// Construct m3u8 content
 	sb := &strings.Builder{}
@@ -63,7 +63,11 @@ func (s *Service) videoCreateManifest(pickcode string, content *storage.Content)
 	sb.WriteString(fmt.Sprintf("#EXT-X-TARGETDURATION:%d\n", int(vm.TargetDuration)))
 	sb.WriteString("#EXT-X-MEDIA-SEQUENCE:0\n")
 	for index, segment := range vm.Segments {
-		sb.WriteString(fmt.Sprintf("#EXTINF:%0.6f,\n%s/%d.ts\n", segment.Duration, pickcode, index))
+		// TODO: Encoded real segment URI and write in manifest.
+		sb.WriteString(fmt.Sprintf(
+			"#EXTINF:%0.6f,\n%s/%d.ts\n",
+			segment.Duration, pickcode, index,
+		))
 	}
 	sb.WriteString("#EXT-X-ENDLIST\n")
 	// Fill storage.Content

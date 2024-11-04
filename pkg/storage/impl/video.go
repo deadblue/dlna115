@@ -3,10 +3,10 @@ package impl
 import (
 	"fmt"
 	"io"
-	"strconv"
 	"strings"
 	"time"
 
+	"github.com/deadblue/dlna115/pkg/compress"
 	"github.com/deadblue/dlna115/pkg/storage"
 	"github.com/deadblue/dlna115/pkg/util"
 	"github.com/deadblue/elevengo"
@@ -28,7 +28,7 @@ type VideoMetadata struct {
 }
 
 func (s *Service) videoFetchContent(fr *FetchRequest, content *storage.Content) (err error) {
-	parts := strings.SplitN(fr.FilePath, "/", 2)
+	parts := strings.SplitN(fr.FilePath, "/", 3)
 	if len(parts) == 1 {
 		if fr.OriginalExt != fr.RequestExt {
 			return errInvalidExt
@@ -38,8 +38,7 @@ func (s *Service) videoFetchContent(fr *FetchRequest, content *storage.Content) 
 		if fr.RequestExt != "ts" {
 			return errInvalidExt
 		}
-		index, _ := strconv.Atoi(parts[1])
-		return s.videoFetchSegment(parts[0], index, content)
+		return s.videoFetchSegment(parts[2], content)
 	}
 }
 
@@ -63,10 +62,9 @@ func (s *Service) videoCreateManifest(pickcode string, content *storage.Content)
 	sb.WriteString(fmt.Sprintf("#EXT-X-TARGETDURATION:%d\n", int(vm.TargetDuration)))
 	sb.WriteString("#EXT-X-MEDIA-SEQUENCE:0\n")
 	for index, segment := range vm.Segments {
-		// TODO: Encoded real segment URI and write in manifest.
 		sb.WriteString(fmt.Sprintf(
-			"#EXTINF:%0.6f,\n%s/%d.ts\n",
-			segment.Duration, pickcode, index,
+			"#EXTINF:%0.6f,\n%s/%d/%s.ts\n",
+			segment.Duration, pickcode, index, compress.Encode(segment.Url),
 		))
 	}
 	sb.WriteString("#EXT-X-ENDLIST\n")
@@ -128,23 +126,12 @@ func (s *Service) videoFetchHlsPlaylist(url string) (pl m3u8.Playlist, err error
 	return
 }
 
-func (s *Service) videoFetchSegment(pickcode string, index int, content *storage.Content) (err error) {
-	vm, ok := s.vmc.Get(pickcode)
-	if !ok {
-		vm = &VideoMetadata{
-			Headers: make(map[string]string),
-		}
-		if err = s.videoFetchMetadata(pickcode, vm); err != nil {
-			return
-		}
-		// Cache for one hour
-		s.vmc.Put(pickcode, vm, time.Hour)
+func (s *Service) videoFetchSegment(name string, content *storage.Content) (err error) {
+	segmentUrl, err := compress.Decode(name)
+	if err != nil {
+		return
 	}
-	if index >= len(vm.Segments) {
-		return errSegmentNotFoud
-	}
-	vs := vm.Segments[index]
-	body, err := s.ea.Fetch(vs.Url)
+	body, err := s.ea.Fetch(segmentUrl)
 	if err == nil {
 		// TODO: Support range?
 		content.Body = body

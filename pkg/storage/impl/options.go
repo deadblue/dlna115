@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/deadblue/dlna115/pkg/credential"
 	"github.com/deadblue/dlna115/pkg/util"
@@ -23,6 +24,8 @@ const (
 	FolderTypeLabel = "label"
 
 	DefaultNameStar = "Favorites"
+
+	_MaxRetryTimes = 16
 )
 
 var (
@@ -61,17 +64,31 @@ func (s *Service) ApplyOptions() (err error) {
 	return
 }
 
+func loadUrlCredential(credUrl string) (r io.ReadCloser, err error) {
+	var resp *http.Response
+	for t := 1; t <= _MaxRetryTimes; t++ {
+		if resp, err = http.Get(credUrl); err != nil {
+			sleepSec := t << 1
+			log.Printf("Open URL failed: [%s], retry after %d seconds!", err, sleepSec)
+			time.Sleep(time.Duration(sleepSec) * time.Second)
+		} else {
+			r = resp.Body
+			break
+		}
+	}
+	return
+}
+
 func (s *Service) loadCredential() (err error) {
 	src := &s.opts.CredentialSource
+	log.Printf("Loading credential from %s: %s", src.Type, src.Source)
 	// Open stream of source
 	var r io.ReadCloser
 	switch src.Type {
 	case CredentialSourceFile:
 		r, err = os.Open(src.Source)
 	case CredentialSourceUrl:
-		var resp *http.Response
-		resp, err = http.Get(src.Source)
-		r = resp.Body
+		r, err = loadUrlCredential(src.Source)
 	default:
 		err = ErrUnsupportedCredentialSource
 	}
@@ -81,7 +98,6 @@ func (s *Service) loadCredential() (err error) {
 	defer r.Close()
 
 	// Read credential data
-	log.Printf("Loading credential from %s: %s", src.Type, src.Source)
 	credData, err := io.ReadAll(r)
 	if err != nil {
 		return

@@ -7,5 +7,5 @@ var (
 
 	errInvalidExt = errors.New("invalid request extension")
 
-	errSegmentNotFoud = errors.New("segment not found")
+	// errSegmentNotFoud = errors.New("segment not found")
 )

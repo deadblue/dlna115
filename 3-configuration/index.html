@@ -1,0 +1,680 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../2-command-line/">
+      
+      
+        <link rel="next" href="../4-mechanism/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.43">
+    
+    
+      
+        <title>配置文件 - DLNA115</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.0253249f.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-orange" data-md-color-accent="deep-orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="DLNA115" class="md-header__button md-logo" aria-label="DLNA115" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.11 0-2 .89-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5a2 2 0 0 0-2-2m-9 13V8l5 4"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            DLNA115
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              配置文件
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="DLNA115" class="md-nav__button md-logo" aria-label="DLNA115" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.11 0-2 .89-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5a2 2 0 0 0-2-2m-9 13V8l5 4"/></svg>
+
+    </a>
+    DLNA115
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1-quick-start/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    快速启动
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2-command-line/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    命令行
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    配置文件
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    配置文件
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      完整格式
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      配置项说明
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="配置项说明">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#storage-115" class="md-nav__link">
+    <span class="md-ellipsis">
+      storage | 115网盘配置
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="storage | 115网盘配置">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#credential-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      credential-source | 凭证来源
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#top-folders" class="md-nav__link">
+    <span class="md-ellipsis">
+      top-folders | 顶级目录列表
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#media" class="md-nav__link">
+    <span class="md-ellipsis">
+      media | 媒体服务配置
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../4-mechanism/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    实现原理
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      完整格式
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      配置项说明
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="配置项说明">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#storage-115" class="md-nav__link">
+    <span class="md-ellipsis">
+      storage | 115网盘配置
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="storage | 115网盘配置">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#credential-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      credential-source | 凭证来源
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#top-folders" class="md-nav__link">
+    <span class="md-ellipsis">
+      top-folders | 顶级目录列表
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#media" class="md-nav__link">
+    <span class="md-ellipsis">
+      media | 媒体服务配置
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="_1">配置文件</h1>
+<h2 id="_2">完整格式</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 115 storage settings</span>
+<span class="nt">storage</span><span class="p">:</span>
+
+<span class="w">  </span><span class="c1"># Source to get 115 credential.</span>
+<span class="w">  </span><span class="nt">credential-source</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># Credential source type: &quot;file&quot; or &quot;url&quot;</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;file&quot;</span>
+<span class="w">    </span><span class="c1"># For &quot;file&quot; type, source should be full path of the file.</span>
+<span class="w">    </span><span class="c1"># For &quot;url&quot; type, source should be the URL.</span>
+<span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/path/to/credential.txt&quot;</span>
+<span class="w">    </span><span class="c1"># Secret key to decrypt credential.</span>
+<span class="w">    </span><span class="nt">secret</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+
+<span class="w">  </span><span class="c1"># Top folders which will be shown under root directory.</span>
+<span class="w">  </span><span class="nt">top-folders</span><span class="p">:</span>
+
+<span class="w">    </span><span class="c1"># A virtual folder which contains stared files.</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;star&quot;</span>
+<span class="w">      </span><span class="c1"># You can set name to override default name.</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Favorites&quot;</span>
+
+<span class="w">    </span><span class="c1"># A virtual folder which contains files with given label.</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;label&quot;</span>
+<span class="w">      </span><span class="c1"># Target must be set, and should be a label name.</span>
+<span class="w">      </span><span class="nt">target</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;label-name&quot;</span>
+<span class="w">      </span><span class="c1"># Default value is the label name.</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+
+<span class="w">    </span><span class="c1"># A directory on storage.</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dir&quot;</span>
+<span class="w">      </span><span class="c1"># Target must be set, and should be a the directory path.</span>
+<span class="w">      </span><span class="nt">target</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;parent/child1/child2&quot;</span>
+<span class="w">      </span><span class="c1"># Default value is the base name of directory.</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+
+<span class="w">  </span><span class="c1"># Do not use HLS for video.</span>
+<span class="w">  </span><span class="c1"># Set this to true if you UPnP player does not support HLS.</span>
+<span class="w">  </span><span class="nt">disable-hls</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+
+<span class="c1"># Media server settings</span>
+<span class="nt">media</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Listening port, default value is 8115.</span>
+<span class="w">  </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8115</span>
+<span class="w">  </span><span class="c1"># Unique ID, server will automatically generate one if you do not set.</span>
+<span class="w">  </span><span class="nt">uuid</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">  </span><span class="c1"># Server friendly name, default value is &quot;115&quot;</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+</code></pre></div>
+<h2 id="_3">配置项说明</h2>
+<h3 id="storage-115">storage | 115网盘配置</h3>
+<p><strong>disable-hls: <code>Boolean</code></strong></p>
+<blockquote>
+<p>是否禁用 HLS，默认值 <code>false</code>。</p>
+<p>当使用非 web 平台的凭证时，此项强制为 <code>true</code>。</p>
+<p>禁用 HLS 后， MediaServer 将从网盘下载视频内容，并推送给客户端，对 CPU 和内存的占用会增大。</p>
+</blockquote>
+<h4 id="credential-source">credential-source | 凭证来源</h4>
+<p><strong>type: <code>String</code></strong></p>
+<blockquote>
+<p>凭证来源类型：</p>
+<ul>
+<li>file: 本地路径。</li>
+<li>url: 网络地址。</li>
+</ul>
+</blockquote>
+<p><strong>source: <code>String</code></strong></p>
+<blockquote>
+<p>凭证来源地址</p>
+<ul>
+<li>当 type="file" 时，应该为一个本地的路径。</li>
+<li>当 type="url" 时，应该为一个 HTTP 或 HTTPS 的 URL。</li>
+</ul>
+</blockquote>
+<p><strong>secret: <code>String</code></strong></p>
+<blockquote>
+<p>凭证密钥（可选）</p>
+<p>解密凭证信息的密钥，仅当凭证文件被加密时使用。</p>
+</blockquote>
+<h4 id="top-folders">top-folders | 顶级目录列表</h4>
+<p>本配置项用于定义 DLNA 服务返回的顶级目录列表，若不配置，则只返回收藏文件。</p>
+<p>本配置项为一个数组，每个数组元素是一个顶级目录的配置，它包含如下属性。</p>
+<p><strong>type: <code>String</code></strong></p>
+<blockquote>
+<p>目录类型</p>
+<ul>
+<li>dir: 一个网盘目录</li>
+<li>label: 标签</li>
+<li>star: 收藏</li>
+</ul>
+</blockquote>
+<p><strong>target: <code>String</code></strong></p>
+<blockquote>
+<p>目录来源</p>
+<ul>
+<li>当 type="dir" 时，为网盘上目录的完整路径，如：“我的接收/视频”</li>
+<li>当 type="label" 时，为标签名字</li>
+<li>当 type="star" 时，此项将被忽略。</li>
+</ul>
+</blockquote>
+<p><strong>name: <code>String</code></strong></p>
+<blockquote>
+<p>目录显示名称（可选）</p>
+<p>用于自定义顶级目录的显示名称，未设置时，将显示目录原始的名称。</p>
+</blockquote>
+<h3 id="media">media | 媒体服务配置</h3>
+<p><strong>port: <code>Integer</code></strong></p>
+<blockquote>
+<p>可选。媒体服务监听端口，默认 8115。</p>
+</blockquote>
+<p><strong>uuid: <code>String</code></strong></p>
+<blockquote>
+<p>可选。媒体服务 UUID。未设置时，会在每次启动时自动生成，建议设置。</p>
+</blockquote>
+<p><strong>name: <code>String</code></strong></p>
+<blockquote>
+<p>可选。媒体服务名称，将显示在客户端的服务列表中，默认为 "115"。</p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant"], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -25,13 +25,19 @@ dlna115 login [-p <platform>] [-s <secret>] [credential-file]
 
 **`-p`/`-platform`**
 
-模拟登录的平台，支持 `mac`，`windows` 和 `linux`（默认值）。
+模拟登录的平台，支持如下平台：
+
+- `web`（默认值）
+- `android`
+- `ios`
+- `tv`
+- `wechat`
+- `alipay`
+- `qandroid`
 
 !!! Note
 
-    115 限制帐号在每个平台最多只能登录一次。
-    
-    如果用户平常使用 115 的 Linux 桌面客户端，请通过 -p 参数指定一个自己不常用的平台，否则桌面客户端的登录将被顶掉。
+    115 限制帐号在每个平台最多只能登录一次，请选择一个自己不常用的平台。
 
 ---
 

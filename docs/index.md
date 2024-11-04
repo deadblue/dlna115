@@ -1,6 +1,6 @@
 # 首页
 
-一个极简的 DLNA MediaServer 实现，配合支持 DLNA 的播放器可浏览和播放 115 网盘上的视频。
+一个极简的 DLNA MediaServer 实现，让局域网内任何支持 DLNA 的播放器可以浏览和播放 115 网盘上的视频。
 
 ![](images/screenshot_1-4.jpg)
 
